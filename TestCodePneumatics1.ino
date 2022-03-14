@@ -7,11 +7,11 @@ const int SYSTEM_PRESSURE = 60;
 
 
 //Arduino Uno Pins
-const int COMPRESSOR = 2;
-const int VALVE_1 = 3;
-const int SENSOR = A1;  //Analog
-const int COMP_SWITCH = 4;
-const int VALVE1_SWITCH = 5;
+const int COMPRESSOR = 3;
+const int VALVE_1 = 2;
+const int SENSOR = A0;  //Analog
+const int COMP_SWITCH = 5;
+const int VALVE1_SWITCH = 4;
 
 
 
@@ -34,7 +34,7 @@ void setup() {
 void loop() {
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
-  double pressure = (((sensorRead - 0.1*V_SENSOR)*(P_MAX - P_MIN))/(0.8*V_SENSOR)) + P_MIN; //PSI
+  double pressure = (((sensorRead - 0.1*V_SENSOR)*(P_MAX - P_MIN))/(0.8*V_SENSOR)) + P_MIN + 0.72; //PSI
 
   //Print out readings
   Serial.print("Pressure: ");
