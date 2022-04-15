@@ -4,10 +4,11 @@
 const int V_SENSOR = 5;
 const int P_MAX = 145; //psi
 const int P_MIN = 0;
-const int SYSTEM_PRESSURE = 70;
+const int SYSTEM_PRESSURE = 85;
+const int PRESSURE_TOLERANCE = 3;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-//Arduino Uno Pins
+//Arduino Uno Pins System Pins
 const int COMPRESSOR = 3;
 const int VALVE_1 = 2;
 const int SENSOR = A0;  //Analog
@@ -18,14 +19,14 @@ const int ESCB = 7;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 //Motor Declarations
-Servo MA;
-Servo MB;
+Servo MA; //HAA
+Servo MB; //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   Serial.begin(9600);
 
-  //Setup pins
+  //Setup Arduino pins
   pinMode(COMPRESSOR, OUTPUT);
   pinMode(VALVE_1, OUTPUT);
   pinMode(ESCA, OUTPUT);
@@ -36,15 +37,14 @@ void setup() {
   pinMode(VALVE1_SWITCH, INPUT);
 
   //Motor Control Pins
+  MA.attach(9); //ESCA
   MB.attach(8); //ESCB
 
-  //Set relay pins to high (relay is ACTIVE LOW)
-  digitalWrite(COMPRESSOR, HIGH);
-  digitalWrite(VALVE_1, HIGH);
-  digitalWrite(ESCA, HIGH);
-  digitalWrite(ESCB, HIGH);
+  //Set relay pins to low (relay is ACTIVE HIGH)
+  digitalWrite(COMPRESSOR, LOW);
+  digitalWrite(VALVE_1, LOW);
 
-  arm(MA);
+  arm(MA);  //Set ESCs to 0
   arm(MB);
 
 } //End of Program Setup
@@ -60,58 +60,63 @@ void loop() { //Main Program
   Serial.print(sensorRead);
   Serial.print("  ...  ");
   Serial.print(pressure);
-  Serial.print(", CSwitch: "); 
+  Serial.print(" psi, CSwitch: "); 
   Serial.print(digitalRead(COMP_SWITCH)); 
   Serial.print(", VSwitch: "); 
   Serial.println(digitalRead(VALVE1_SWITCH));
 
   
-  pressure = SYSTEM_PRESSURE + 1; //Comment out for Automatic Compressor operation
+ // pressure = SYSTEM_PRESSURE + 1; //Comment out for Automatic Compressor operation
 ///////////////////////////////////////////////////////////////////////////////////////////////  
-  digitalWrite(ESCA, LOW); //Power ESCs
-  digitalWrite(ESCB, LOW);
   setSpeed(MA,0); //Set speed to 0
   setSpeed(MB,0);
 
 //Control  
   if((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)){ //Run Motor program if push both buttons at the same time
-    delay(1000);
+    delay(500);
+    //A = HAA, B = HFE
     
+    //setupESC(MA);
     //setupESC(MB);
-    runESCTest(MB);
     
-    delay(1000);
-  }
-  else{
+    //runESCTest(MB);
+    //runESCTest(MA);
 
+    runTwoESC(MB, MA);
+
+    runImagine22(MA, MB, VALVE_1);
+    
+    
+    delay(500);
+  }
+  else{ //Pneumatics Control
+///
     if(pressure > SYSTEM_PRESSURE){   //First check if system pressure is too high, turn off compressor
-      digitalWrite(COMPRESSOR, HIGH);
-    }
- 
-    if((pressure < SYSTEM_PRESSURE) || (digitalRead(COMP_SWITCH) == HIGH)){   //If pressure is too low, or overriden by manual switch, turn on compressor
       digitalWrite(COMPRESSOR, LOW);
     }
-    else{
+ 
+    if(((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || (digitalRead(COMP_SWITCH) == HIGH)){   //If pressure is too low, or overriden by manual switch, turn on compressor
       digitalWrite(COMPRESSOR, HIGH);
     }
-
-    if(digitalRead(VALVE1_SWITCH) == HIGH){   //If valve switch is flipped open valve
-      digitalWrite(VALVE_1, LOW);
+    else{
+      digitalWrite(COMPRESSOR, LOW);
+    }
+///
+    if(digitalRead(VALVE1_SWITCH) == HIGH){   //If valve switch is pressed open valve
+      digitalWrite(VALVE_1, HIGH);
     }
     else{
-      digitalWrite(VALVE_1, HIGH);
+      digitalWrite(VALVE_1, LOW);
     }
   }
   
-  delay(100);
+  delay(70);
 } //End of main program
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 //write(-100) = Full backwards
 //write(100) = Full forwards
 void runESCTest(Servo M){ //Run Motor test code
-  int speed; //Speed variable
-
   setSpeed(M, 20);
   delay(1500);
 
@@ -128,15 +133,35 @@ void runESCTest(Servo M){ //Run Motor test code
  ///////////////////////////////////////////////////////////////////////////////////////////////
  
 void setupESC(Servo M){ //Run setup code to normalize ESC input ranges
-  int speed; //Speed variable
+  setSpeed(M, 99);  //High forward
+  delay(7000);
 
-  setSpeed(M, 100);  //High forward
-  delay(6000);
-
-  setSpeed(M, -100); //High reverse
+  setSpeed(M, -99); //High reverse
   delay(10000);
 
  } //End of ESC Setup
+///////////////////////////////////////////////////////////////////////////////////////////////
+void runTwoESC(Servo M1, Servo M2){ //Sample test for both motors at same time
+  setSpeed(M1, 20);
+  delay(1500);
+
+  setSpeed(M1, 0);
+  setSpeed(M2, 20);
+  delay(1000);
+  
+  setSpeed(M2, 0);
+  setSpeed(M1, -20);
+  delay(1500);
+
+  setSpeed(M1, 0);
+  setSpeed(M2, -20);
+  delay(1000);
+  
+  setSpeed(M1, 0);
+  setSpeed(M2, 0);
+  delay(1000); //Turns off for 1 second
+  
+}//Run both ESC tests
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void arm(Servo M){  //Set motor speed to 0
@@ -153,4 +178,18 @@ void setSpeed(Servo M, int speed){ //Set the speed for motor from -100% to 100%
   
   M.write(angle);
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
+//////////////////////////////////By Devon and Sammi///////////////////////////////////////////
+///////////////////////////////////////4/23/22/////////////////////////////////////////////////
+void runImagine22(Servo MA, Servo MB, int VALVE){
+  //MA = HAA, MB = HFE, VALVE = Muscle Control Signal
+  //For motors, Stay in [-20,20]. 0 = Stop. Positions are related to speed and time on.
+  //Gear reduction = 100:1.
+  //Will likely be able to only trigger muscle once without refilling reservoir
+
+
+
+  delay(500); //Wait for 500ms
+} //End of Imagine 2022 Demo Program
