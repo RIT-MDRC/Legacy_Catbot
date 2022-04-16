@@ -1,10 +1,11 @@
 #include <Servo.h>
+//#include "Motor.h"
 
 //System Constants for Sensor Calculation
 const int V_SENSOR = 5;
 const int P_MAX = 145; //psi
 const int P_MIN = 0;
-const int SYSTEM_PRESSURE = 85;
+const int SYSTEM_PRESSURE = 82;
 const int PRESSURE_TOLERANCE = 3;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,8 +15,6 @@ const int VALVE_1 = 2;
 const int SENSOR = A0;  //Analog
 const int COMP_SWITCH = 5;
 const int VALVE1_SWITCH = 4;
-const int ESCA = 6;
-const int ESCB = 7;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 //Motor Declarations
@@ -29,8 +28,8 @@ void setup() {
   //Setup Arduino pins
   pinMode(COMPRESSOR, OUTPUT);
   pinMode(VALVE_1, OUTPUT);
-  pinMode(ESCA, OUTPUT);
-  pinMode(ESCB, OUTPUT);
+  //pinMode(ESCA, OUTPUT);
+  //pinMode(ESCB, OUTPUT);
   
   pinMode(SENSOR, INPUT);
   pinMode(COMP_SWITCH, INPUT);
@@ -79,10 +78,10 @@ void loop() { //Main Program
     //setupESC(MA);
     //setupESC(MB);
     
-    //runESCTest(MB);
+    runESCTest(MB);
     //runESCTest(MA);
 
-    runTwoESC(MB, MA);
+    //runTwoESC(MB, MA);
 
     runImagine22(MA, MB, VALVE_1);
     
@@ -118,13 +117,13 @@ void loop() { //Main Program
 //write(100) = Full forwards
 void runESCTest(Servo M){ //Run Motor test code
   setSpeed(M, 20);
-  delay(1500);
+  delay(1200);
 
   setSpeed(M, 0);
-  delay(2000);
+  delay(1000);
   
   setSpeed(M, -20);
-  delay(1500);
+  delay(1200);
   
   setSpeed(M, 0);
   delay(1000); //Turns off for 1 second
