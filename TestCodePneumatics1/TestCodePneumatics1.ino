@@ -78,7 +78,7 @@ void loop() { //Main Program
     //setupESC(MA);
     //setupESC(MB);
     
-    runESCTest(MB);
+    //runESCTest(MB);
     //runESCTest(MA);
 
     //runTwoESC(MB, MA);
@@ -182,13 +182,37 @@ void setSpeed(Servo M, int speed){ //Set the speed for motor from -100% to 100%
 ////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
 //////////////////////////////////By Devon and Sammi///////////////////////////////////////////
 ///////////////////////////////////////4/23/22/////////////////////////////////////////////////
+    
+    // Goal: run A and B 
+    // HAA is out  and HFE is rotate
+    // order of function , what happens first
+    // angel - speed and time still set values 
+    // Inflate up, out deflate down
+    
 void runImagine22(Servo MA, Servo MB, int VALVE){
   //MA = HAA, MB = HFE, VALVE = Muscle Control Signal
   //For motors, Stay in [-20,20]. 0 = Stop. Positions are related to speed and time on.
   //Gear reduction = 100:1.
   //Will likely be able to only trigger muscle once without refilling reservoir
 
+  digitalWrite(VALVE, HIGH);            //inflates valve
+ 
+ setSpeed(MB,20);
+ setSpeed (MA,0);
+  delay(2000);
 
+  setSpeed(MB,0);
+  setSpeed(MA,10);
+    delay(2000);
 
-  delay(500); //Wait for 500ms
+  setSpeed(MB,-20);
+  setSpeed(MA,0);
+    delay(2000);
+
+  setSpeed(MB,0);
+  setSpeed(MA,-9); 
+    delay(500); //Wait for 500ms
+
+  digitalWrite(VALVE, LOW);     //Releases 
+  
 } //End of Imagine 2022 Demo Program
