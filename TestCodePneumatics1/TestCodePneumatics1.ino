@@ -1,5 +1,5 @@
 #include <Servo.h>
-//#include "Motor.h"
+#include "Motor.h"
 
 //System Constants for Sensor Calculation
 const int V_SENSOR = 5;

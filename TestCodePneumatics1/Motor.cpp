@@ -4,14 +4,14 @@
   : motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB){
       attach(motorPin);
       arm();
-      pinMode(encoderPinA, input);
-      pinMode(encoderPinB, input);
+      pinMode(encoderPinA, INPUT);
+      pinMode(encoderPinB, INPUT);
 
   } //construct motor object
 
   void Motor::Run(int speedPcnt, int timeSec){
       if(speedPcnt <= 100 && speedPcnt >= -100){
-        this.setSpeed(speedPcnt);
+        setSpeed(speedPcnt);
         }
       delay(timeSec * 1000);
   }//Run motor
@@ -33,12 +33,12 @@
   void Motor::tuneESC(double low, double high){
       //High forward
       int angle = map(99, -100, 100, low, high); //Sets servo positions to different speeds
-      this.write(angle);
+      write(angle);
       delay(7000);
 
       //High reverse
-      int angle = map(-99, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds
-      this.write(angle);
+      angle = map(-99, -100, 100, low, high); //Sets servo positions to different speeds
+      write(angle);
       delay(10000);
   }//Setup ESC range
   
@@ -54,7 +54,7 @@
     int angle = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
     //With full mapping [[map(speed, -100, 100, 0, 180)]], the max servo speeds are -88%->88%.
 
-    this.write(angle);
+    write(angle);
   }//Set motor speed and map
 
   void Motor::arm(){
