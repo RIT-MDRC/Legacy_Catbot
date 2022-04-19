@@ -72,7 +72,7 @@ void loop() { //Main Program
 
 //Control  
   if((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)){ //Run Motor program if push both buttons at the same time
-    delay(500);
+    delay(100);
     //A = HAA, B = HFE
     
     //setupESC(MA);
@@ -86,7 +86,7 @@ void loop() { //Main Program
     runImagine22(MA, MB, VALVE_1);
     
     
-    delay(500);
+    delay(100);
   }
   else{ //Pneumatics Control
 ///
@@ -94,7 +94,7 @@ void loop() { //Main Program
       digitalWrite(COMPRESSOR, LOW);
     }
  
-    if(((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || (digitalRead(COMP_SWITCH) == HIGH)){   //If pressure is too low, or overriden by manual switch, turn on compressor
+    if(((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || ((digitalRead(COMP_SWITCH) == HIGH)&&(digitalRead(VALVE1_SWITCH) == LOW))){   //If pressure is too low, or overriden by manual switch, turn on compressor
       digitalWrite(COMPRESSOR, HIGH);
     }
     else{
@@ -109,7 +109,7 @@ void loop() { //Main Program
     }
   }
   
-  delay(70);
+  delay(100);
 } //End of main program
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
