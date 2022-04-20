@@ -74,17 +74,18 @@ void loop() { //Main Program
   if((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)){ //Run Motor program if push both buttons at the same time
     delay(100);
     //A = HAA, B = HFE
-    
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //setupESC(MA);
     //setupESC(MB);
-    
-    //runESCTest(MB);
-    //runESCTest(MA);
-
     //runTwoESC(MB, MA);
 
-    runImagine22(MA, MB, VALVE_1);
-    
+
+    //Program to move motor by a small amount (for resetting)
+    //runESCTest(MB); //HFE
+    //runESCTest(MA); //HAA
+
+    //runImagine22(MA, MB, VALVE_1);
     
     delay(100);
   }
@@ -94,14 +95,15 @@ void loop() { //Main Program
       digitalWrite(COMPRESSOR, LOW);
     }
  
-    if(((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || ((digitalRead(COMP_SWITCH) == HIGH)&&(digitalRead(VALVE1_SWITCH) == LOW))){   //If pressure is too low, or overriden by manual switch, turn on compressor
+    if(((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || ((digitalRead(COMP_SWITCH) == HIGH)&&(digitalRead(VALVE1_SWITCH) == LOW))){   
+      //If pressure is too low, or overriden by manual switch, turn on compressor
       digitalWrite(COMPRESSOR, HIGH);
     }
     else{
       digitalWrite(COMPRESSOR, LOW);
     }
 ///
-    if(digitalRead(VALVE1_SWITCH) == HIGH){   //If valve switch is pressed open valve
+    if((digitalRead(COMP_SWITCH) == LOW)&&(digitalRead(VALVE1_SWITCH) == HIGH)){   //If valve switch is pressed open valve
       digitalWrite(VALVE_1, HIGH);
     }
     else{
@@ -115,18 +117,18 @@ void loop() { //Main Program
 
 //write(-100) = Full backwards
 //write(100) = Full forwards
-void runESCTest(Servo M){ //Run Motor test code
-  setSpeed(M, 20);
-  delay(1200);
+void runESCTest(Servo M){ //Run Motor test code for one motor
+  setSpeed(M, -20);//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  delay(250);
 
-  setSpeed(M, 0);
-  delay(1000);
+  //setSpeed(M, 0);
+ // delay(1000);
   
-  setSpeed(M, -20);
-  delay(1200);
+  //setSpeed(M, -20);
+  //delay(1200);
   
-  setSpeed(M, 0);
-  delay(1000); //Turns off for 1 second
+  //setSpeed(M, 0);
+  //delay(1000); //Turns off for 1 second
 
  } //End of ESC Test program
  ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -199,11 +201,11 @@ void runImagine22(Servo MA, Servo MB, int VALVE){
  
  setSpeed(MB,20);
  setSpeed (MA,0);
-  delay(2000);
+  delay(750);
 
   setSpeed(MB,0);
   setSpeed(MA,10);
-    delay(2000);
+    delay(1000);
 
   setSpeed(MB,-20);
   setSpeed(MA,0);
