@@ -9,39 +9,61 @@ const int SYSTEM_PRESSURE = 82;
 const int PRESSURE_TOLERANCE = 3;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-//Arduino Uno Pins System Pins
-const int COMPRESSOR = 3;
-const int VALVE_1 = 2;
-const int SENSOR = A0;  //Analog
-const int COMP_SWITCH = 5;
-const int VALVE1_SWITCH = 4;
-///////////////////////////////////////////////////////////////////////////////////////////////
 
+//Arduino Leonardo Pins System Pins
+const int COMPRESSOR = 9;
+const int VALVE_1 = 8;
+const int SENSOR = A0;  //Analog
+const int COMP_SWITCH = 11;
+const int VALVE1_SWITCH = 10; 
+///////////////////////////////////////////////////////////////////////////////////////////////
+//Encoder Pins and Vars 
+/*
+const int A1 = 1; //Motor A encoder Pin 1
+const int A2 = 5; //Motor A encoder Pin 2
+const int B1 = 0; //Motor B encoder Pin 1
+const int B2 = 4;  //Motor B encoder Pin 2
+
+long[] counts = [0,0]; */
+///////////////////////////////////////////////////////////////////////////////////////////////
 //Motor Declarations
 Servo MA; //HAA
 Servo MB; //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //Setup Arduino pins
   pinMode(COMPRESSOR, OUTPUT);
   pinMode(VALVE_1, OUTPUT);
-  //pinMode(ESCA, OUTPUT);
-  //pinMode(ESCB, OUTPUT);
   
   pinMode(SENSOR, INPUT);
   pinMode(COMP_SWITCH, INPUT);
   pinMode(VALVE1_SWITCH, INPUT);
 
-  //Motor Control Pins
-  MA.attach(9); //ESCA
-  MB.attach(8); //ESCB
+  /*pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(B1, INPUT);
+  pinMode(B2, INPUT);*/
 
-  //Set relay pins to low (relay is ACTIVE HIGH)
+  //Motor Control Pins
+  MA.attach(13); //ESCA
+  MB.attach(12); //ESCB
+
+  //Set relay and encoder pins to low (relay is ACTIVE HIGH)
   digitalWrite(COMPRESSOR, LOW);
   digitalWrite(VALVE_1, LOW);
+  /*digitalWrite(A1, LOW);
+  digitalWrite(A2, LOW);
+  digitalWrite(B1, LOW);
+  digitalWrite(B2, LOW);
+
+  //Attach Encoder pins to interrupts
+  attachInterrupt(digitalPinToInterrupt(A1), readEncoder('A'), CHANGE); //attach interrupt to A1
+  attachInterrupt(digitalPinToInterrupt(B1), readEncoder('B'), CHANGE); //attach interrupt to A1
+  */
+  
 
   arm(MA);  //Set ESCs to 0
   arm(MB);
@@ -52,7 +74,7 @@ void loop() { //Main Program
 ///////////////////////////////////////////////////////////////////////////////////////////////
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
-  double pressure = (((sensorRead - 0.1*V_SENSOR)*(P_MAX - P_MIN))/(0.8*V_SENSOR)) + P_MIN + 0.72; //PSI
+  double pressure = (((sensorRead - 0.1*V_SENSOR)*(P_MAX - P_MIN))/(0.8*V_SENSOR)) + P_MIN + 0.36; //PSI
 
   //Print out readings
   Serial.print("Pressure: ");
@@ -85,7 +107,7 @@ void loop() { //Main Program
     //runESCTest(MB); //HFE
     //runESCTest(MA); //HAA
 
-    //runImagine22(MA, MB, VALVE_1);
+    runImagine22(MA, MB, VALVE_1);
     
     delay(100);
   }
@@ -118,7 +140,7 @@ void loop() { //Main Program
 //write(-100) = Full backwards
 //write(100) = Full forwards
 void runESCTest(Servo M){ //Run Motor test code for one motor
-  setSpeed(M, -20);//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  setSpeed(M, 20);//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   delay(250);
 
   //setSpeed(M, 0);

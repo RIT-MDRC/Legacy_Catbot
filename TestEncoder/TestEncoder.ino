@@ -3,7 +3,7 @@
 #include <math.h>
 
 #define EncoderPinA 2   // Encoder Pin A pin 2 and pin 3 are inturrpt pins
-#define EncoderPinB 5   // Encoder Pin B
+#define EncoderPinB 3   // Encoder Pin B
 
 //Initialize Variables
 long counts = 0; //counts the encoder counts. The encoder has ~233counts/rev
