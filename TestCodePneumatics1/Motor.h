@@ -4,6 +4,10 @@
 //Motor class for catbot hip joints
 #include "Arduino.h"
 #include <Servo.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <math.h>
+
 
 static double mapLow = 10.8;
 static double mapHigh = 169.2;
@@ -22,12 +26,17 @@ class Motor : public Servo {
 
     int getVel(); //Get velocity feedback from encoder
 
-    
+    long getCounts();
+
+    void readEncoder();
 
   private:
     int motorPin;
     int encoderPinA;
     int encoderPinB;
+    volatile long counts;
+
+    
 
     void setSpeed(int speed);
 
