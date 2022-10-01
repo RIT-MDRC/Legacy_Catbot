@@ -1,6 +1,9 @@
+// Hello world :)
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <math.h>
+#include <Arduino.h>
 
 #define EncoderPinA 2   // Encoder Pin A pin 2 and pin 3 are inturrpt pins
 #define EncoderPinB 3   // Encoder Pin B
