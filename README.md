@@ -2,7 +2,7 @@
 
 # Catbot :smile_cat::robot:
 
-Quadruped Hybrid Pneumatic-Electric Robot. Utilizes McKibben Muscles for bio-inpired locomotion.
+> Quadruped Hybrid Pneumatic-Electric Robot. Utilizes McKibben Muscles for bio-inpired locomotion.
 
 # Table of Contents
 
@@ -47,7 +47,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 ## Downloading Necessary Library using PlatformIO
 
 -   Open PlatformIO home
-    > Click on the alien head on the left
+    > Click on the alien head on the left.
     > Go to QUICK ACCESS > PIO Home > Open
 -   Open "Libraries" on the left menu
 -   In the search bar, search for necessary Libraries in the list below
