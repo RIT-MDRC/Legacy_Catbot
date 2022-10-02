@@ -1,4 +1,6 @@
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="display: inline-block; margin: 0 auto; max-width: 500px">
+<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="position: absolute;width: 25vw;left: 50%;transform: translate(-50%,0); max-width: 500px">
+<!-- just to make space for the logo-->
+<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt=" " title=" " style="width: 25vw; max-width: 500px; opacity: 0">
 
 # Catbot :smile_cat::robot:
 
@@ -47,7 +49,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 ## Downloading Necessary Library using PlatformIO
 
 -   Open PlatformIO home
-    - Click on the alien head on the left
+    > Click on the alien head on the left
     > Go to QUICK ACCESS > PIO Home > Open
 -   Open "Libraries" on the left menu
 -   In the search bar, search for necessary Libraries in the list below
@@ -58,5 +60,11 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 
 ### Note
 
--   On extension conflict error (at least that @hiromon0125 encountered)
+-   On extension conflict error (at least that Hiro encountered)
     > Disable/uninstall arduino extension due to conflicts with PIO extension
+
+# Contributors
+
+<a href = "https://github.com/Tanu-N-Prabhu/Python/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo = GitHub_username/repository_name"/>
+</a>
