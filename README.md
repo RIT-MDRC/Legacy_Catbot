@@ -1,6 +1,8 @@
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="position: absolute;width: 25vw;left: 50%;transform: translate(-50%,0); max-width: 500px">
+<div style="position:relative; width:100%">
+    <img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="position: absolute;width: 25vw;left: 50%;transform: translate(-50%,0); max-width: 500px">
+    <img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt=" " title=" " style="width: 25vw; max-width: 500px; opacity: 0">
+</div>
 <!-- just to make space for the logo-->
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt=" " title=" " style="width: 25vw; max-width: 500px; opacity: 0">
 
 # Catbot :smile_cat::robot:
 
