@@ -60,9 +60,3 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 
 -   On extension conflict error (at least that Hiro encountered)
     > Disable/uninstall arduino extension due to conflicts with PIO extension
-
-# Contributors
-
-<a href = "https://github.com/Tanu-N-Prabhu/Python/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo = GitHub_username/repository_name"/>
-</a>
