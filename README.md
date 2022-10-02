@@ -10,7 +10,7 @@
 2. [List of Dependent Libraries](#list-of-necessary-libraries)
 3. [Setup](#setup)
 4. [How to Download Libraries](#downloading-necessary-library-using-platformio)
-5. [Help](#help)
+5. [Get Help](#help)
 6. [For Common Issues](#note)
 
 # Getting Started
@@ -39,10 +39,9 @@ Last updated: 10/2/22 by Hiroto Takeuchi
     cd /folder_of_choice
     git clone https://github.com/RIT-MDRC/Catbot.git .
     ```
--   Switch into encoder_test branch (temporary)
+-   Switch into encoder_test branch (temporary; until merge of this branch)
     -   In the bottom blue banner, click on "main"
     -   select "origin/encoder-test"
-        Necessary until merge of this branch
 
 ## Downloading Necessary Library using PlatformIO
 
@@ -54,7 +53,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 
 # HELP
 
--   With setup or libraries contact Heekun in MDRC discord server
+-   For setup or libraries contact Heekun in MDRC discord server
 
 ### Note
 
