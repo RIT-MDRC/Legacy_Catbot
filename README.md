@@ -1,4 +1,4 @@
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" align="right" alt="MDRC LOGO" title="MDRC LOGO" style="width: 100px;">
+<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" align="right" alt="MDRC LOGO" title="MDRC LOGO" style="width: 100px;margin-top: 24px;">
 
 # Catbot :smile_cat::robot:
 
