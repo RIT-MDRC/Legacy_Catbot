@@ -50,7 +50,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
     > Click on the alien head on the left.
     > Go to QUICK ACCESS > PIO Home > Open
 -   Open "Libraries" on the left menu
--   In the search bar, search for necessary Libraries in the list below
+-   In the search bar, search for necessary Libraries in the list above
 
 # HELP
 
