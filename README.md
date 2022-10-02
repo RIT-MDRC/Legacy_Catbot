@@ -1,6 +1,6 @@
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" align="right" alt="MDRC LOGO" title="MDRC LOGO" style="width: 100px;margin-top: 24px;">
+<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" align="right" alt="MDRC LOGO" title="MDRC LOGO" width="100">
 
-# Catbot :smile_cat::robot:
+# Catbot
 
 > Quadruped Hybrid Pneumatic-Electric Robot. Utilizes McKibben Muscles for bio-inpired locomotion.
 
@@ -50,7 +50,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
     > Click on the alien head on the left.
     > Go to QUICK ACCESS > PIO Home > Open
 -   Open "Libraries" on the left menu
--   In the search bar, search for necessary Libraries in the list above
+-   In the search bar, search for [necessary Libraries](#list-of-necessary-libraries)
 
 # HELP
 
