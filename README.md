@@ -1,4 +1,4 @@
-<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="display: inline-block; margin: 0; max-width: 500px">
+<img src="https://pbs.twimg.com/profile_images/661962002/logo_400x400.png" alt="MDRC LOGO" title="MDRC LOGO" style="display: inline-block; margin: 0 auto; max-width: 500px">
 
 # Catbot :smile_cat::robot:
 
@@ -34,9 +34,9 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 -   Install PlatformIO extensions
 -   Create a new folder with the name of your choice
 -   Clone repository
-    open folder in vscode and open terminal with ctrl+` or
+    - open folder in vscode and open terminal with ctrl+` or in the terminal
     ```
-    cd folder_of_choice
+    cd /folder_of_choice
     git clone https://github.com/RIT-MDRC/Catbot.git .
     ```
 -   Switch into encoder_test branch (temporary)
@@ -47,7 +47,7 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 ## Downloading Necessary Library using PlatformIO
 
 -   Open PlatformIO home
-    > Click on the alien head on the left
+    - Click on the alien head on the left
     > Go to QUICK ACCESS > PIO Home > Open
 -   Open "Libraries" on the left menu
 -   In the search bar, search for necessary Libraries in the list below
@@ -58,5 +58,5 @@ Last updated: 10/2/22 by Hiroto Takeuchi
 
 ### Note
 
--   On extension conflict error (at least that @hiro encountered)
+-   On extension conflict error (at least that @hiromon0125 encountered)
     > Disable/uninstall arduino extension due to conflicts with PIO extension
