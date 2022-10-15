@@ -2,7 +2,7 @@
 
 #include <Potentiometer.h>
 
-Potentiometer pot(A0, 320, 1024);
+Potentiometer pot(A0, 320, 1023);
 
 void setup()
 {

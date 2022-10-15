@@ -16,10 +16,10 @@ public:
     pinMode(pin, INPUT);
   };
 
-  int getReading()
+  float getReading()
   {
     float potVar = analogRead(pin);
-    return ceil(potVar / maxValue * maxDeg);
+    return potVar / maxValue * maxDeg;
   }
 
 private:
