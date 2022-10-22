@@ -1,7 +1,6 @@
 #ifndef Potentiometer_h
 #define Potentiometer_h
 
-//Motor class for CatBot hip joints
 #include "Arduino.h"
 
 class Potentiometer
@@ -16,6 +15,8 @@ public:
     pinMode(pin, INPUT);
   };
 
+  // Converts raw data to a rotational degree value.
+  // Starts at zero, and increases as potentiometer is rotated counterclockwise.
   float getReading()
   {
     float potVar = analogRead(pin);
@@ -23,9 +24,9 @@ public:
   }
 
 private:
-  int pin;
-  int maxDeg;
-  int maxValue;
+  int pin;        // Pin that will read potentiometer values
+  int maxDeg;     // Maximum rotation of the potentiometer (degrees)
+  int maxValue;   // Maximum raw output value of the potentiometer
 };
 
 
