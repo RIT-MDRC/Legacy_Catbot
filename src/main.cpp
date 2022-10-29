@@ -4,15 +4,21 @@
 
 Potentiometer pot(A0, 320, 1023);
 
-void setup()
+void setup()  // Runs once at the start
 {
-  // put your setup code here, to run once:
+  __hook(&Potentiometer::RotationChangeEvent, pot, onRotationChanged);
   Serial.begin(9600);
 }
 
-void loop()
+void loop()   // Runs repeatedly
 {
-  // put your main code here, to run repeatedly:
-  Serial.println(pot.getReading());
+  // Have potentiometer always listen for changes in rotation
+  pot.listenForRotation();
   delay(100);
+}
+
+// This is a test to demonstrate the rotation listener, can be removed later
+void onRotationChanged(int rotation)
+{
+  Serial.println(rotation);
 }
