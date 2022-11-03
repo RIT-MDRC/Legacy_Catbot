@@ -1,10 +1,21 @@
+/*
+Code to iterate over range of speed values to test ESC limits and verify function
+
+INSTRUCTIONS:
+  1) Run Arduino code with ESC not powered
+  2) Connect 12V supply to ESC
+  3) Enter the START constant to serial monitor in order to begin testing
+  4) Record Results
+  5) Program enters manual mode - use the serial monitor to enter any speed value
+*/
+
 #include <Servo.h>
 
 #define LOWERLIMIT 900
 #define MIDDLE 1500 // middle/starting value
 #define UPPERLIMIT 2000
 
-#define START 3 //garbage nonzero value - enter to begin testing process
+#define START 3 //garbage value - enter in serial monitor to begin testing process
                 //could and should be refined
 
 int value = MIDDLE; 
@@ -25,8 +36,8 @@ void setup() {
   Serial.println("middlevalue");
   
   firstESC.writeMicroseconds(MIDDLE);
-  Serial.println(MIDDLE);   //user feedback
-  while(value != START){
+  Serial.println(MIDDLE);   
+  while(value != START){        //wait until esc has been powered on
     value = Serial.parseInt(); 
     Serial.println("enter 3 to start");
     delay(100);
