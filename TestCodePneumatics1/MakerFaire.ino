@@ -1,8 +1,10 @@
 /* Demo code for Maker Faire 2022
     Created 11/12/2022
+    Worked on By: Evan, Devon, Veronika, and Cameron
 */
 
 #include "Motor.h"
+#include <Servo.h>
 
 //System Constants for Sensor Calculation
 const int V_SENSOR = 5;
@@ -31,10 +33,16 @@ const int MBPin = 12;
 //Motor Declarations
 Motor MA(MAPin, a1, a2); //HAA
 Motor MB(MBPin, b1, b2); //HFE
+#define LOWERLIMIT 900
+#define MIDDLE 1500  // middle- starting value
+#define UPPERLIMIT 2000
+
+#define START 3  // Garbage Value- enter in serial monitor to begin testing process, could and should be refined 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() { //Main Program
   //////////////////////////////////////////////////////////////////////////////////////////////
+  // Displays the values that the Arduino is reading onto the serial monotor
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   /*double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; //PSI
@@ -64,6 +72,94 @@ void loop() { //Main Program
     MA.tuneESC(-100, 100);
     Serial.println("tuning");
     
+// inserting the ESC COde
+
+int value = MIDDLE; 
+int temp; //used to filter null characters
+
+Servo firstESC; 
+
+
+void setup() {
+
+ 
+ firstESC.attach(13);   //pin 13
+
+ Serial.begin(9600);   // start serial at 9600 baud
+
+ //set middle value ...........................
+  Serial.println("middlevalue");
+  
+  firstESC.writeMicroseconds(MIDDLE);
+  Serial.println(MIDDLE);   
+  while(value != START){        //wait until esc has been powered on
+    value = Serial.parseInt(); 
+    Serial.println("enter 3 to start");
+    delay(100);
+  }
+//.............................................
+
+
+//updown.......................................
+  for(int i=MIDDLE;i<=UPPERLIMIT;i+=20){
+    firstESC.writeMicroseconds(i);
+    Serial.println(i);
+    delay(100);
+  }
+  delay(2000); //pause at high thresh
+  
+  for(int i=UPPERLIMIT;i>=LOWERLIMIT;i-=20){
+    firstESC.writeMicroseconds(i);
+    Serial.println(i);
+    delay(100);
+  }
+  delay(2000); //pause at low thresh
+
+  for(int i=LOWERLIMIT;i<=MIDDLE;i+=20){ //reset to middle position before entering manual mode
+    firstESC.writeMicroseconds(i);
+    Serial.println(i);
+    delay(100);
+  }
+  delay(1000);
+
+  value = MIDDLE;
+
+//.........................    
+}
+
+
+
+
+void loop() {
+
+//enter write values manually in infinite loop
+
+ temp = Serial.parseInt();
+ 
+ 
+ if(temp>=1) //checking for invalid characters
+ {
+  value = temp;
+ }
+ 
+/*
+ if(temp == 'k')//killswitch
+ {
+  while(1)
+  {
+    firstESC.writeMicroseconds(MIDDLE);
+    value = MIDDLE;
+  }
+ }*/
+ 
+   Serial.println(value);   //user feedback
+   firstESC.writeMicroseconds(value);
+
+ delay(100);
+}
+
+
+
     //MB.tuneESC(-86,99);
 
    //Set new map ranges
@@ -105,7 +201,7 @@ void loop() { //Main Program
   */
 } //End of main program
 
-
+/// to do: propperly remove ESC Setup section of code. not needed in this demo, we did setup earlier 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
 //////////////////////////////////By Devon and Sammi///////////////////////////////////////////
