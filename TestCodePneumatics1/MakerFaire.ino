@@ -1,5 +1,6 @@
 /* Demo code for Maker Faire 2022
     Created 11/12/2022
+    Worked on By: Evan, Devon, Veronika, and Cameron
 */
 
 #include "Motor.h"
@@ -43,6 +44,7 @@ void loop() { //Main Program
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////
+  // Displays the values that the Arduino is reading onto the serial monotor
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   /*double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; //PSI
@@ -112,7 +114,6 @@ void loop() { //Main Program
   delay(100);
   */
 } //End of main program
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
