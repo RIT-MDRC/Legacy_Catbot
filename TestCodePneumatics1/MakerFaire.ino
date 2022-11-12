@@ -29,11 +29,19 @@ const int MAPin = 13;
 const int MBPin = 12;
 
 //Motor Declarations
-Motor MA(MAPin, a1, a2); //HAA
-Motor MB(MBPin, b1, b2); //HFE
+Motor MA(MAPin, a1, a2, 1000, 2300); //HAA
+Motor MB(MBPin, b1, b2, 900, 2000); //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() { //Main Program
+
+    Serial.println("tuning");
+    MA.tuneESC(-100,100);
+
+    Serial.println("running");
+    runMF22(MA, MB, VALVE_1);
+
+
   //////////////////////////////////////////////////////////////////////////////////////////////
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   /*double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
@@ -57,12 +65,12 @@ void loop() { //Main Program
 
   //Control
   //if ((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)) { //Run Motor program if push both buttons at the same time
-    delay(100);
+    //delay(100);
     //A = HAA, B = HFE
 
    //Tune range for ESCs syntax:(high forward, high reverse)
-    MA.tuneESC(-100, 100);
-    Serial.println("tuning");
+
+    
     
     //MB.tuneESC(-86,99);
 
@@ -76,7 +84,7 @@ void loop() { //Main Program
     //MA.Run(20, 0.25); //HAA
     //MB.Run(20, 0.25); //HFE
     
-   runMF22(MA, MB, VALVE_1);
+
   //}
   ///////////////////////////////////////////////////////////////////////////////////////////////
   /*

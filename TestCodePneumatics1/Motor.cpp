@@ -1,6 +1,6 @@
 #include "Motor.h"
 
-Motor::Motor (int motorPin, int encoderPinA, int encoderPinB)
+Motor::Motor (int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh)
   : Encoder(encoderPinA, encoderPinB), motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB) 
 {
   counts = 0;
@@ -11,6 +11,9 @@ Motor::Motor (int motorPin, int encoderPinA, int encoderPinB)
   pinMode(encoderPinB, INPUT);
   digitalWrite(encoderPinA, LOW);
   digitalWrite(encoderPinB, LOW);
+
+  setMapLow(lowthresh);
+  setMapHigh(highthresh);
 
 } //construct Motor object
 
@@ -51,8 +54,7 @@ void Motor::tuneESC(double low, double high) {
 
   angle = map(low, -100, 100, 0, 180); //Sets servo positions to different speeds
   Servo::write(angle);
-  delay(1000);
-  delay(4000);
+  delay(5000);
 
   }
   
@@ -102,10 +104,10 @@ long Motor::getCounts(){
 }//Update counts var and return current counts value
 
 void Motor::setSpeed(int speed) {
-  int angle = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
+  int velocity = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
   //With full mapping [[map(speed, -100, 100, 0, 180)]], the max servo speeds are -88%->88%.
 
-  Servo::write(angle);
+  Servo::writeMicroseconds(velocity);
 }//Set motor speed and map
 
 void Motor::arm() {
