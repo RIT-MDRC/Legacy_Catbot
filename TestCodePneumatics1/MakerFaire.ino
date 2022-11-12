@@ -33,25 +33,6 @@ Motor MA(MAPin, a1, a2); //HAA
 Motor MB(MBPin, b1, b2); //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-void setup() {
-  Serial.begin(115200);
-  interrupts(); //Enable interrupts for encoders
-
-  //Setup Arduino pins
-  pinMode(COMPRESSOR, OUTPUT);
-  pinMode(VALVE_1, OUTPUT);
-
-  pinMode(SENSOR, INPUT);
-  pinMode(COMP_SWITCH, INPUT);
-  pinMode(VALVE1_SWITCH, INPUT);
-
-  //Set relay pins to low (relay is ACTIVE HIGH)
-  digitalWrite(COMPRESSOR, LOW);
-  digitalWrite(VALVE_1, LOW);
-  
-  
-} //End of Program Setup
-
 void loop() { //Main Program
   //////////////////////////////////////////////////////////////////////////////////////////////
   //Read in and calculate the pressure from the analog pressure sensor (psi)
@@ -95,7 +76,7 @@ void loop() { //Main Program
     //MA.Run(20, 0.25); //HAA
     //MB.Run(20, 0.25); //HFE
     
-   //runImagine22(MA, MB, VALVE_1);
+   runMF22(MA, MB, VALVE_1);
   //}
   ///////////////////////////////////////////////////////////////////////////////////////////////
   /*
@@ -135,7 +116,26 @@ void loop() { //Main Program
 // angel - speed and time still set values
 // Inflate up, out deflate down
 
-void runImagine22(Motor MA, Motor MB, int VALVE) {
+void setup() {
+  Serial.begin(115200);
+  interrupts(); //Enable interrupts for encoders
+
+  //Setup Arduino pins
+  pinMode(COMPRESSOR, OUTPUT);
+  pinMode(VALVE_1, OUTPUT);
+
+  pinMode(SENSOR, INPUT);
+  pinMode(COMP_SWITCH, INPUT);
+  pinMode(VALVE1_SWITCH, INPUT);
+
+  //Set relay pins to low (relay is ACTIVE HIGH)
+  digitalWrite(COMPRESSOR, LOW);
+  digitalWrite(VALVE_1, LOW);
+  
+  
+} //End of Program Setup
+
+void runMF22(Motor MA, Motor MB, int VALVE) {
   //MA = HAA, MB = HFE, VALVE = Muscle Control Signal
   //For motors, Stay in [-20,20]. 0 = Stop. Positions are related to speed and time on.
   //Gear reduction = 100:1.
