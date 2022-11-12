@@ -42,7 +42,21 @@ void Motor::Run(int dir, int deg, int speedPcnt) {
 }//Run motor based on pos
 
 void Motor::tuneESC(double low, double high) {
-  //High forward
+  
+  {
+  int angle = map(high, -100, 100, 0, 180);
+  Servo::write(angle);
+  
+  delay(5000);
+
+  angle = map(low, -100, 100, 0, 180); //Sets servo positions to different speeds
+  Servo::write(angle);
+  delay(1000);
+  delay(4000);
+
+  }
+  
+  /*//High forward
   int angle = map(high, -100, 100, 0, 180); //Sets servo positions to different speeds
   Servo::write(angle);
   delay(7000);
@@ -50,7 +64,7 @@ void Motor::tuneESC(double low, double high) {
   //High reverse
   angle = map(low, -100, 100, 0, 180); //Sets servo positions to different speeds
   Servo::write(angle);
-  delay(10000);
+  delay(10000);*/
 }//Setup ESC range
 
 

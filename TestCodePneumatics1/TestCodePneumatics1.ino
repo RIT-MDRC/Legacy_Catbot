@@ -44,13 +44,14 @@ void setup() {
   //Set relay pins to low (relay is ACTIVE HIGH)
   digitalWrite(COMPRESSOR, LOW);
   digitalWrite(VALVE_1, LOW);
-
+  
+  
 } //End of Program Setup
 
 void loop() { //Main Program
   //////////////////////////////////////////////////////////////////////////////////////////////
   //Read in and calculate the pressure from the analog pressure sensor (psi)
-  double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
+  /*double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; //PSI
 
   //Print out readings
@@ -64,18 +65,20 @@ void loop() { //Main Program
   Serial.print(digitalRead(VALVE1_SWITCH));
   Serial.print("|| MA: "); MA.printStatus();
   Serial.print("|| MB: "); MB.printStatus();
-  Serial.println();
+  Serial.println();*/
 
   // pressure = SYSTEM_PRESSURE + 1; //Comment out for Automatic Compressor operation
   //////////////////////////////////////////////////////////////////////////////////////////////
 
   //Control
-  if ((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)) { //Run Motor program if push both buttons at the same time
+  //if ((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)) { //Run Motor program if push both buttons at the same time
     delay(100);
     //A = HAA, B = HFE
 
    //Tune range for ESCs syntax:(high forward, high reverse)
-    MA.tuneESC(-86, 99);
+    MA.tuneESC(-100, 100);
+    Serial.println("tuning");
+    
     //MB.tuneESC(-86,99);
 
    //Set new map ranges
@@ -89,8 +92,9 @@ void loop() { //Main Program
     //MB.Run(20, 0.25); //HFE
     
    //runImagine22(MA, MB, VALVE_1);
-  }
-  //////////////////////////////////////////////////////////////////////////////////////////////
+  //}
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  /*
   else { //Pneumatics Control
     if (pressure > SYSTEM_PRESSURE) { //First check if system pressure is too high, turn off compressor
       digitalWrite(COMPRESSOR, LOW);
@@ -113,6 +117,7 @@ void loop() { //Main Program
   }
   
   delay(100);
+  */
 } //End of main program
 
 
