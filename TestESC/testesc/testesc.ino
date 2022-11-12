@@ -1,4 +1,4 @@
-/*
+/**
 Code to iterate over range of speed values to test ESC limits and verify function
 
 INSTRUCTIONS:
