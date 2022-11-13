@@ -1,3 +1,8 @@
+/* Demo code for Maker Faire 2022
+    Created 11/12/2022
+    Worked on By: Evan, Devon, Veronika, and Cameron
+*/
+
 #include "Motor.h"
 
 //System Constants for Sensor Calculation
@@ -25,31 +30,21 @@ const int MAPin = 13;
 const int MBPin = 12;
 
 //Motor Declarations
-Motor MA(MAPin, a1, a2); //HAA
-Motor MB(MBPin, b1, b2); //HFE
+Motor MA(MAPin, a1, a2, 1000, 2300); //HAA
+Motor MB(MBPin, b1, b2, 900, 2000); //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-void setup() {
-  Serial.begin(115200);
-  interrupts(); //Enable interrupts for encoders
-
-  //Setup Arduino pins
-  pinMode(COMPRESSOR, OUTPUT);
-  pinMode(VALVE_1, OUTPUT);
-
-  pinMode(SENSOR, INPUT);
-  pinMode(COMP_SWITCH, INPUT);
-  pinMode(VALVE1_SWITCH, INPUT);
-
-  //Set relay pins to low (relay is ACTIVE HIGH)
-  digitalWrite(COMPRESSOR, LOW);
-  digitalWrite(VALVE_1, LOW);
-  
-  
-} //End of Program Setup
-
 void loop() { //Main Program
+
+    Serial.println("tuning");
+    MA.tuneESC(-100,100);
+
+    Serial.println("running");
+    runMF22(MA, MB, VALVE_1);
+
+
   //////////////////////////////////////////////////////////////////////////////////////////////
+  // Displays the values that the Arduino is reading onto the serial monotor
   //Read in and calculate the pressure from the analog pressure sensor (psi)
   /*double sensorRead = (analogRead(SENSOR) * 0.0049); //Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; //PSI
@@ -72,12 +67,12 @@ void loop() { //Main Program
 
   //Control
   //if ((digitalRead(COMP_SWITCH) == HIGH) && (digitalRead(VALVE1_SWITCH) == HIGH)) { //Run Motor program if push both buttons at the same time
-    delay(100);
+    //delay(100);
     //A = HAA, B = HFE
 
    //Tune range for ESCs syntax:(high forward, high reverse)
-    MA.tuneESC(-100, 100);
-    Serial.println("tuning");
+
+    
     
     //MB.tuneESC(-86,99);
 
@@ -91,7 +86,7 @@ void loop() { //Main Program
     //MA.Run(20, 0.25); //HAA
     //MB.Run(20, 0.25); //HFE
     
-   //runImagine22(MA, MB, VALVE_1);
+
   //}
   ///////////////////////////////////////////////////////////////////////////////////////////////
   /*
@@ -120,7 +115,6 @@ void loop() { //Main Program
   */
 } //End of main program
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
 //////////////////////////////////By Devon and Sammi///////////////////////////////////////////
@@ -131,7 +125,26 @@ void loop() { //Main Program
 // angel - speed and time still set values
 // Inflate up, out deflate down
 
-void runImagine22(Motor MA, Motor MB, int VALVE) {
+void setup() {
+  Serial.begin(115200);
+  interrupts(); //Enable interrupts for encoders
+
+  //Setup Arduino pins
+  pinMode(COMPRESSOR, OUTPUT);
+  pinMode(VALVE_1, OUTPUT);
+
+  pinMode(SENSOR, INPUT);
+  pinMode(COMP_SWITCH, INPUT);
+  pinMode(VALVE1_SWITCH, INPUT);
+
+  //Set relay pins to low (relay is ACTIVE HIGH)
+  digitalWrite(COMPRESSOR, LOW);
+  digitalWrite(VALVE_1, LOW);
+  
+  
+} //End of Program Setup
+
+void runMF22(Motor MA, Motor MB, int VALVE) {
   //MA = HAA, MB = HFE, VALVE = Muscle Control Signal
   //For motors, Stay in [-20,20]. 0 = Stop. Positions are related to speed and time on.
   //Gear reduction = 100:1.
