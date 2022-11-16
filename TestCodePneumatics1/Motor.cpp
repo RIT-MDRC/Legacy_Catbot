@@ -26,7 +26,7 @@ void Motor::Run(int speedPcnt, double timeSec) {
   arm();
 }//Run motor
 
-void Motor::Run(int dir, int deg, int speedPcnt) {
+void Motor::Run(int dir, int deg, int speedPcnt) { //unused for now
   arm();
   
   int speed;
@@ -44,7 +44,7 @@ void Motor::Run(int dir, int deg, int speedPcnt) {
   arm();
 }//Run motor based on pos
 
-void Motor::tuneESC(double low, double high) {
+void Motor::tuneESC(double low, double high) { //unused for now
   
   {
   int angle = map(high, -100, 100, 0, 180);
