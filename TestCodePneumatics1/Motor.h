@@ -12,7 +12,7 @@ class Motor : public Servo, public Encoder{
   public:
     Motor(int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh); //construct motor object, encoderPinA should be an interrupt Pin
 
-    void arm(); //Set motor speed to 0
+    void arm(); // Set motor speed to 0
 
     void Run(int speedPcnt, double timeSec); //Run motor for a % speed and a time in seconds
 
