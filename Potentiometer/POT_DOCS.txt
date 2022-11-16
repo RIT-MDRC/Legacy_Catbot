@@ -1,0 +1,26 @@
+===========================
+POTENTIOMETER DOCUMENTATION
+===========================
+
+===========================
+SETUP
+===========================
+
+Include the Potentiometer.h file. To read a potentiometer's rotation:
+    1. Attach the potentiometer to the desired analog Arduino pin.
+    2. Create a new instance of the Potentiometer object with the following arguments:
+
+    Potentiometer potName(pin, max_rotation, max_raw_value)
+    pin: the analog pin, e.g. A0
+    max_rotation: the maximum rotation of the potentiometer (check its product page)
+    max_raw_value: the maximum raw reading the potentiometer can give when plugged directly into the Arduino (default is 1023)
+
+===========================
+METHODS
+===========================
+
+float getReading()
+Gets the current rotation of the potentiometer. Returns a float in the range [0, max_rotation].
+
+int getReadingInt()
+Gets the current rotation of the potentiometer, and rounds it up to the nearest int. Returns an int in the range [0, max_rotation].
