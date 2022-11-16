@@ -15,27 +15,14 @@ class Motor : public Servo{
 
     void Run(int speedPcnt, double timeSec); //Run motor for a % speed and a time in seconds
 
-    void Run(int dir, int deg, int speedPcnt); //Run motor based on pos; dir = 0/1, 0=-% 1=+%
+    void setMapLow(double newLow); //Set the low end of the motor speed mapping
 
-    void tuneESC(double low, double high); //Setup ESC range
-
-    int getDir(); //Get directional feedback from encoder
-
-    int getVel(); //Get velocity feedback from encoder
-
-    long getCounts(); //Update and get value of counts
-
-    void readEncoder(); //Update counts
-
-    void setMapLow(double); //Set the low end of the motor speed mapping
-
-    void setMapHigh(double); //Set the high end of the motor speed mapping
-
+    void setMapHigh(double newHigh); //Set the high end of the motor speed mapping
+    
     double getMapLow();
 
     double getMapHigh();
 
-    void printStatus(); //Print motor state
 
   private:
     int motorPin;
