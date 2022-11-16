@@ -4,11 +4,10 @@
 //Motor class for CatBot hip joints
 #include "Arduino.h"
 #include <Servo.h>
-#include <Encoder.h> //Must install Encoder library from Arduino Library Manager
 #include <math.h>
 #include <String.h>
 
-class Motor : public Servo, public Encoder{
+class Motor : public Servo{
   public:
     Motor(int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh); //construct motor object, encoderPinA should be an interrupt Pin
 

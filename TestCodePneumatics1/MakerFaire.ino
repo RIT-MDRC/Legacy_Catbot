@@ -1,10 +1,11 @@
 /* Demo code for Maker Faire 2022
     Created 11/12/2022
-    Worked on By: Evan, Devon, Veronika, and Cameron
+    Worked on By: Evan, Dan, Hiro, Devon, Veronika, and Cameron
 */
 
-#include "Motor.h"
 #include "Arduino.h" 
+#include "Motor.h"
+#include "Potentiometer.h"
 
 void setup();
 void runMF22(Motor MA, Motor MB, int VALVE);
