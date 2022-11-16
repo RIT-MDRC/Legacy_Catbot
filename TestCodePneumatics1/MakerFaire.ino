@@ -1,9 +1,13 @@
 /* Demo code for Maker Faire 2022
     Created 11/12/2022
-    Worked on By: Evan, Hiroto, Dan, Devon, Veronika, and Cameron
+    Worked on By: Evan, Devon, Veronika, and Cameron
 */
 
 #include "Motor.h"
+#include "Arduino.h" 
+
+void setup();
+void runMF22(Motor MA, Motor MB, int VALVE);
 
 //System Constants for Sensor Calculation
 const int V_SENSOR = 5;
@@ -29,15 +33,15 @@ const int b2 = 4;  //Motor B encoder Pin 2
 const int MAPin = 13;
 const int MBPin = 12;
 
-//Motor Declarations
+//Motor Declarations: Motor Pin, Encoder Pin, Encoder Pin, Low ESC Threshold, High ESC Threshold 
 Motor MA(MAPin, a1, a2, 1000, 2300); //HAA
 Motor MB(MBPin, b1, b2, 900, 2000); //HFE
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() { //Main Program
 
-    Serial.println("tuning");
-    MA.tuneESC(-100,100);
+    //Serial.println("tuning");
+    //MA.tuneESC(-100,100);
 
     Serial.println("running");
     runMF22(MA, MB, VALVE_1);
@@ -119,6 +123,7 @@ void loop() { //Main Program
 ////////////////////////////////IMAGINE RIT DEMO CODE//////////////////////////////////////////
 //////////////////////////////////By Devon and Sammi///////////////////////////////////////////
 ///////////////////////////////////////4/23/22/////////////////////////////////////////////////
+//Edited by Evan for Maker Faire 11/19/2022
 // Goal: run A and B
 // HAA is out  and HFE is rotate
 // order of function , what happens first
@@ -152,37 +157,20 @@ void runMF22(Motor MA, Motor MB, int VALVE) {
 
   MA.arm();
   MB.arm();
+
+  delay(5000);
+
+  MA.Run(25,0.5); //25% FWD for half a second
   
+  /*
   digitalWrite(VALVE, HIGH);            //inflates valve
-  
   MB.Run(20, 0.75);
   MA.Run(10, 1);
   MB.Run(-20, 2);
   MA.Run(-9, 0.5);
-
   digitalWrite(VALVE, LOW);     //Releases
-  
+  */
   MA.arm();
   MB.arm();
-
-  /*Previous program (before 5/2022 revisions)
-   * digitalWrite(VALVE, HIGH);
-   * setSpeed(MB, 20);
-   * setSpeed (MA, 0);
-   * delay(750);
-
-   * setSpeed(MB, 0);
-   * setSpeed(MA, 10);
-   * delay(1000);
-
-   * setSpeed(MB, -20);
-   * setSpeed(MA, 0);
-   * delay(2000);
-
-   * setSpeed(MB, 0);
-   * setSpeed(MA, -9);
-   * delay(500); //Wait for 500ms
-   * digitalWrite(VALVE, LOW);     //Releases
-   */
   
-} //End of Imagine 2022 Demo Program
+} //End of Maker Faire 2022 Demo Program
