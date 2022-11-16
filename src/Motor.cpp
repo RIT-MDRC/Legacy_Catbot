@@ -1,11 +1,10 @@
 #include "Motor.h"
 
 Motor::Motor (int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh)
-  : Encoder(encoderPinA, encoderPinB), motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB) 
+  : motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB) 
 {
   counts = 0;
   Servo::attach(motorPin);
-  arm();
   
   pinMode(encoderPinA, INPUT);
   pinMode(encoderPinB, INPUT);
@@ -14,16 +13,17 @@ Motor::Motor (int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int
 
   setMapLow(lowthresh);
   setMapHigh(highthresh);
+  arm();
 
 } //construct Motor object
 
 void Motor::Run(int speedPcnt, double timeSec) {
-  arm();
+  //arm();
   if (speedPcnt <= 100 && speedPcnt >= -100) {
     setSpeed(speedPcnt);
   }
   delay(timeSec * 1000);
-  arm();
+  //arm();
 }//Run motor
 
 void Motor::Run(int dir, int deg, int speedPcnt) { //unused for now
@@ -71,7 +71,6 @@ void Motor::tuneESC(double low, double high) { //unused for now
 
 
 void Motor::readEncoder() {
-  counts = this->Encoder::read();
 }//Update counts var
 
 int Motor::getDir() {
@@ -106,7 +105,7 @@ long Motor::getCounts(){
 void Motor::setSpeed(int speed) {
   int velocity = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
   //With full mapping [[map(speed, -100, 100, 0, 180)]], the max servo speeds are -88%->88%.
-
+  Serial.println(velocity);
   Servo::writeMicroseconds(velocity);
 }//Set motor speed and map
 

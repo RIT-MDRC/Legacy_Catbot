@@ -42,8 +42,8 @@ class Motor : public Servo{
     int encoderPinA;
     int encoderPinB;
 
-    double mapLow = 10.8; //Low end of motor speed mapping
-    double mapHigh = 169.2; //High end of motor speed mapping
+    double mapLow = 1000; //Low end of motor speed mapping
+    double mapHigh = 2000; //High end of motor speed mapping
     
     volatile long counts; //Encoder Counts
 
