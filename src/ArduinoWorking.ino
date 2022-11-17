@@ -28,12 +28,15 @@ INSTRUCTIONS:
 #define STOP 1 // garbage value - enter in serial monitor to begin testing process
                // could and should be refined
 
-// Motor motorB(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+// Messing around with pointers because we are cool like that :D
+Motor* aMotor = NULL;
+Motor* bMotor = NULL;
 
 
 void setup()
 {
-  Motor motorA(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  aMotor = new Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  bMotor = new Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
   Serial.begin(9600); // start serial at 9600 baud
   while (!Serial)
   {
@@ -42,7 +45,16 @@ void setup()
   Serial.write("starting program\n");
   delay(1000);
   // motorA.arm();
-  motorA.run(40, 5);
+  aMotor -> run(40, 5);
+  bMotor -> run(40, 5);
+
+
+
+
+  delete aMotor;
+  delete bMotor;
+  aMotor = NULL;
+  bMotor = NULL;
 }
 
 void loop()
@@ -51,6 +63,7 @@ void loop()
 
   delay(10);
 }
+
 
 // Servo firstESC;
 
