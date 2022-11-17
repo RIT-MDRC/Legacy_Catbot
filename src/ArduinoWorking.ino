@@ -180,12 +180,14 @@ void loop()
 // ---------------------------------------------------------------------
 
 void extendLeg(int valve, float durationSec)
+  // Extends the leg by calling the pneumatics
 {
   digitalWrite(valve, HIGH);
   delay(durationSec);
 }
 
 void retractLeg(int valve, float durationSec)
+  // Retract the leg by calling the pneumatics
 {
   digitalWrite(valve, LOW);
   delay(durationSec);
@@ -193,28 +195,33 @@ void retractLeg(int valve, float durationSec)
 
 void rotateLegForward(Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // Rotate the motor to simulate the leg moving forward
   motor->run(rotationSpeedPer, durationSec);
 }
 
 void rotateLegBackward(Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // Rotate the motor the opposite way to simulate the leg pushing the ground backward
   motor->run(-rotationSpeedPer, durationSec);
 }
 
 void legLiftForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // Sequence to Lift the leg and moving it forward
   retractLeg(valve, durationSec / 2);
   rotateLegForward(motor, rotationSpeedPer , durationSec / 2);
 }
 
 void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // sequence to step down and push itself forward
   extendLeg(valve, durationSec / 2);
   rotateLegBackward(motor, rotationSpeedPer, durationSec / 2);
 }
 
 void stepForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // Sequence to make a step forward
   delay(durationSec / 6);
   legLiftForward(valve, motor, rotationSpeedPer, durationSec/3);
   delay(durationSec / 6);
