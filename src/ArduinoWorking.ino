@@ -214,7 +214,7 @@ void legLiftForward(int valve, Motor *motor, int rotationSpeedPer, float duratio
 
 void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
-  // sequence to step down and push itself forward
+  // Sequence to step down and push itself forward
   extendLeg(valve, durationSec / 2);
   rotateLegBackward(motor, rotationSpeedPer, durationSec / 2);
 }
