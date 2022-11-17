@@ -20,7 +20,7 @@ INSTRUCTIONS:
 #define UPPERLIMIT 2000
 
 #define AMOTORPIN 13
-#define BMOTORPIN 12
+#define BMOTORPIN 3
 
 #define APOT A5 
 #define BPOT A4
@@ -28,8 +28,8 @@ INSTRUCTIONS:
 #define STOP 1 //garbage value - enter in serial monitor to begin testing process
                 //could and should be refined
 
-#define MOTORA Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE)
-#define MOTORB Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE)
+Motor motorA(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+Motor motorB(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
 
 // int value = MIDDLE; 
 // int temp; //used to filter null characters
@@ -38,20 +38,36 @@ void setup() {
   Serial.begin(9600);   // start serial at 9600 baud
   while (!Serial) {}
   delay(1000);
-  Serial.write("up and running\n");
-  MOTORA.run(90, 5);
-  MOTORB.run(90, 5);
+
+  // Serial.write("up and running\n");
+  // motorA.run(90, 5);
+  // motorB.run(90, 5);
+  
   delay(5000);
-  Serial.write("running again\n");
-  MOTORB.run(40, 2);
-  MOTORA.run(40, 2);
+  motorA.arm();
+  motorB.arm();
+  // Serial.write("running again\n");
+  // motorA.run(40, 2);
+  // motorB.run(40, 2);
 }
 
 
 void loop() {
-  Serial.write("running loop\n");
+  // motorA.arm();
+  // motorB.arm();
+}
+
+  //Servo firstESC; 
+
+// Motor motorB;
+// Potentiometer potA(APOT, 285);
+// Potentiometer potB(BPOT, 285);
+
+// --- PROGRAM GRAVEYARD ---
+
+  // Serial.write("running loop\n");
   // MOTORB.runCall(30);
-  delay(2000);
+  // delay(2000);
   // MOTORA.arm();
   // MOTORB.arm();
 
@@ -64,18 +80,6 @@ void loop() {
   //   Serial.write("work finished");
   // }'
   // MOTORB.arm();
-}
-
-  //Servo firstESC; 
-  // motorA.arm();
-  // motorB.arm();
-
-// Motor motorB;
-// Potentiometer potA(APOT, 285);
-// Potentiometer potB(BPOT, 285);
-
-// --- PROGRAM GRAVEYARD ---
-
 // void setup(){
 //  firstESC.attach(13);   //pin 13
 //  firstESC.writeMicroseconds(MIDDLE);
