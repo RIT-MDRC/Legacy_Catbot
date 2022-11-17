@@ -1,41 +1,45 @@
 #ifndef Motor_h
 #define Motor_h
 
-//Motor class for CatBot hip joints
 #include "Arduino.h"
 #include <Servo.h>
 #include <math.h>
-#include <String.h>
+#include <string.h>
 
-class Motor : public Servo{
+class Motor
+{
   public:
-    Motor(int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh); //construct motor object, encoderPinA should be an interrupt Pin
+    // Construct motor object
+    Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle);
 
-    void arm(); //Set motor speed to 0
+    // Set motor speed to 0
+    void arm();
 
-    void Run(int speedPcnt, double timeSec); //Run motor for a % speed and a time in seconds
+    // Run motor at a percent speed for the given amount of time (in seconds)
+    void run(int speedPercent, double seconds);
 
-    void setMapLow(double newLow); //Set the low end of the motor speed mapping
+    // Set the low end of the motor speed mapping
+    void setMapLow(double newLow);
 
-    void setMapHigh(double newHigh); //Set the high end of the motor speed mapping
+    // Set the high end of the motor speed mapping
+    void setMapHigh(double newHigh);
     
+    // Get what the current lower mapping bound is
     double getMapLow();
 
+    // Get what the current upper mapping bound is
     double getMapHigh();
 
-
   private:
+    Servo esc;
+
     int motorPin;
-    int encoderPinA;
-    int encoderPinB;
 
-    double mapLow = 1000; //Low end of motor speed mapping
-    double mapHigh = 2000; //High end of motor speed mapping
-    
-    volatile long counts; //Encoder Counts
+    double mapLow = 1000;       // Low end of motor speed mapping (max negative spin)
+    double mapHigh = 2000;      // High end of motor speed mapping (max positive spin)
+    double mapMiddle;           // Middle point of speed mapping (no spin)
 
-    void setSpeed(int speed); //Set motor speed (low level control)
-    
+    void setSpeed(int speed);   // Set motor speed (low level control)
 };
 
 #endif

@@ -1,61 +1,47 @@
 #include "Motor.h"
 
-Motor::Motor (int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh)
-  : motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB), mapLow(lowthresh), mapHigh(highthresh)
+#define DELAY 100   // ms of delay between writing to ESCs
+
+Motor::Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle)
 {
-  Servo::attach(motorPin);
-  
-  //pinMode(encoderPinA, INPUT);
-  //pinMode(encoderPinB, INPUT);
-  //digitalWrite(encoderPinA, LOW);
-  //digitalWrite(encoderPinB, LOW);
+  motorPin = _motorPin;
+  mapLow = _mapLow;
+  mapHigh = _mapHigh;
+  mapMiddle = _mapMiddle;
 
-  //setMapLow(lowthresh);
-  //setMapHigh(highthresh);
-  //arm();
-
-} //construct Motor object
-
-
-
-void Motor::Run(int speedPcnt, double timeSec) {
-  //arm();
-  if (speedPcnt <= 100 && speedPcnt >= -100) {
-    setSpeed(speedPcnt);
-  }
-  delay(timeSec * 1000);
+  esc.attach(_motorPin);
   arm();
-}//Run motor
+}
 
-void Motor::arm() {
-  setSpeed(0);
-}//Set motor speed to 0
+void Motor::arm()
+{
+  esc.writeMicroseconds(mapMiddle);
+}
 
-void Motor::setMapLow(double newLow){
-  mapLow = newLow;
-}//Set the low end of the motor speed mapping
+void Motor::run(int speedPercent, double seconds)
+{
+  // Only allow speed percentages in the range [-100%, 100%]
+  if (speedPercent > 100 && speedPercent < -100) { return; }
 
-void Motor::setMapHigh(double newHigh){
-  mapHigh = newHigh;
-}//Set the high end of the motor speed mapping
+  // If user sets 0% speed, they're essentially just arming the motor
+  if (speedPercent == 0)
+  {
+     arm();
+     return;
+  }
 
-double Motor::getMapLow(){
-  return mapLow;
-}//Get mapLow
+  // Middle value might not be in the actual center, so map() will have different
+  // ranges based on where the "middle" is
+  int velocity;
 
-double Motor::getMapHigh(){
-  return mapHigh;
-}//Get mapHigh
+  if (speedPercent > 0) { velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh); }
+  else { velocity = map(speedPercent, -100, 0, mapLow, mapMiddle); }
 
+  for (int i = 0; i <= seconds * 1000; i += DELAY)
+  {
+    esc.writeMicroseconds(velocity);
+    delay(DELAY);
+  }
 
-
-void Motor::setSpeed(int speed) {
-  int velocity = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
-  //With full mapping [[map(speed, -100, 100, 0, 180)]], the max servo speeds are -88%->88%.
-  Serial.println(velocity);
-  Servo::writeMicroseconds(velocity);
-}//Set motor speed and map
-
-
-
-//END OF MOTOR.CPP ****************************8
+  arm();
+}
