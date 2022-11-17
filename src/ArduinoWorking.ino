@@ -13,7 +13,7 @@ INSTRUCTIONS:
 
 #include <Servo.h>
 #include "Motor.h"
-#include "Potentiometer.h"
+//#include "Potentiometer.h"
 
 #define LOWERLIMIT 900
 #define MIDDLE 1500 // middle/starting value
@@ -22,42 +22,37 @@ INSTRUCTIONS:
 #define AMOTORPIN 13
 #define BMOTORPIN 3
 
-#define APOT A5 
+#define APOT A5
 #define BPOT A4
 
-#define STOP 1 //garbage value - enter in serial monitor to begin testing process
-                //could and should be refined
+#define STOP 1 // garbage value - enter in serial monitor to begin testing process
+               // could and should be refined
 
-Motor motorA(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
-Motor motorB(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+// Motor motorB(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
 
-// int value = MIDDLE; 
-// int temp; //used to filter null characters
 
-void setup() {
-  Serial.begin(9600);   // start serial at 9600 baud
-  while (!Serial) {}
+void setup()
+{
+  Motor motorA(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  Serial.begin(9600); // start serial at 9600 baud
+  while (!Serial)
+  {
+  }
   delay(1000);
-
-  // Serial.write("up and running\n");
-  // motorA.run(90, 5);
-  // motorB.run(90, 5);
-  
-  delay(5000);
-  motorA.arm();
-  motorB.arm();
-  // Serial.write("running again\n");
-  // motorA.run(40, 2);
-  // motorB.run(40, 2);
-}
-
-
-void loop() {
+  Serial.write("starting program\n");
+  delay(1000);
   // motorA.arm();
-  // motorB.arm();
+  motorA.run(40, 5);
 }
 
-  //Servo firstESC; 
+void loop()
+{
+  Serial.write("running loop\n");
+
+  delay(10);
+}
+
+// Servo firstESC;
 
 // Motor motorB;
 // Potentiometer potA(APOT, 285);
@@ -65,21 +60,21 @@ void loop() {
 
 // --- PROGRAM GRAVEYARD ---
 
-  // Serial.write("running loop\n");
-  // MOTORB.runCall(30);
-  // delay(2000);
-  // MOTORA.arm();
-  // MOTORB.arm();
+// Serial.write("running loop\n");
+// MOTORB.runCall(30);
+// delay(2000);
+// MOTORA.arm();
+// MOTORB.arm();
 
-  // MOTORB.runCall(30);
-  // Serial.write("motorB Called");
-  // MOTORA.runCall(30);
-  // Serial.write("motorA Called");
-  // temp = Serial.parseInt();
-  // while (temp != STOP) {
-  //   Serial.write("work finished");
-  // }'
-  // MOTORB.arm();
+// MOTORB.runCall(30);
+// Serial.write("motorB Called");
+// MOTORA.runCall(30);
+// Serial.write("motorA Called");
+// temp = Serial.parseInt();
+// while (temp != STOP) {
+//   Serial.write("work finished");
+// }'
+// MOTORB.arm();
 // void setup(){
 //  firstESC.attach(13);   //pin 13
 //  firstESC.writeMicroseconds(MIDDLE);
@@ -93,16 +88,15 @@ void loop() {
 //  firstESC.writeMicroseconds(MIDDLE);
 //  //set middle value ...........................
 //   Serial.println("middlevalue");
-  
+
 //   firstESC.writeMicroseconds(MIDDLE);
-//   Serial.println(MIDDLE);   
+//   Serial.println(MIDDLE);
 //   while(value != START){        //wait until esc has been powered on
-//     value = Serial.parseInt(); 
+//     value = Serial.parseInt();
 //     Serial.println("enter 3 to start");
 //     delay(100);
 //   }
 // //.............................................
-
 
 // //updown.......................................
 //   for(int i=MIDDLE;i<=UPPERLIMIT;i+=20){
@@ -111,7 +105,7 @@ void loop() {
 //     delay(100);
 //   }
 //   delay(2000); //pause at high thresh
-  
+
 //   for(int i=UPPERLIMIT;i>=LOWERLIMIT;i-=20){
 //     firstESC.writeMicroseconds(i);
 //     Serial.println(i);
@@ -128,21 +122,19 @@ void loop() {
 
 //   value = MIDDLE;
 
-//.........................    
+//.........................
 // }
 
-
 // void loop(){
-//enter write values manually in infinite loop
+// enter write values manually in infinite loop
 
-  // temp = Serial.parseInt();
- 
- 
-  // if(temp>=1) //checking for invalid characters
-  // {
-  //  value = temp;
-  // }
- 
+// temp = Serial.parseInt();
+
+// if(temp>=1) //checking for invalid characters
+// {
+//  value = temp;
+// }
+
 /*
  if(temp == 'k')//killswitch
  {
@@ -152,8 +144,7 @@ void loop() {
     value = MIDDLE;
   }
  }*/
- 
-   //Serial.println(value);   //user feedback
-   //firstESC.writeMicroseconds(value);
+
+// Serial.println(value);   //user feedback
+// firstESC.writeMicroseconds(value);
 // }
-  

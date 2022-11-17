@@ -9,7 +9,7 @@ Motor::Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle)
   mapHigh = _mapHigh;
   mapMiddle = _mapMiddle;
 
-  esc.attach(_motorPin, mapLow, mapHigh);
+  esc.attach(_motorPin);
   arm();
 }
 
@@ -38,6 +38,10 @@ void Motor::run(int speedPercent, double seconds)
   if (speedPercent > 0) { velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh); }
   else { velocity = map(speedPercent, -100, 0, mapLow, mapMiddle); }
   
+  Serial.print("Sending ");
+  Serial.print(velocity);
+  Serial.print(" ");
+
   esc.writeMicroseconds(velocity);
   delay(seconds*1000);
   arm();

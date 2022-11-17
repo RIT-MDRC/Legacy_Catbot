@@ -42,7 +42,7 @@ class Motor
     double mapHigh = 2000;      // High end of motor speed mapping (max positive spin)
     double mapMiddle;           // Middle point of speed mapping (no spin)
 
-    void setSpeed(int speed);   // Set motor speed (low level control)
+   // void setSpeed(int speed);   // Set motor speed (low level control)
 };
 
 #endif
