@@ -1,138 +1,79 @@
 #include "Motor.h"
 
-Motor::Motor (int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh)
-  : motorPin(motorPin), encoderPinA(encoderPinA), encoderPinB(encoderPinB) 
+#define DELAY 100 // ms of delay between writing to ESCs
+
+Motor::Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle)
 {
-  counts = 0;
-  Servo::attach(motorPin);
-  
-  pinMode(encoderPinA, INPUT);
-  pinMode(encoderPinB, INPUT);
-  digitalWrite(encoderPinA, LOW);
-  digitalWrite(encoderPinB, LOW);
+  motorPin = _motorPin;
+  mapLow = _mapLow;
+  mapHigh = _mapHigh;
+  mapMiddle = _mapMiddle;
 
-  setMapLow(lowthresh);
-  setMapHigh(highthresh);
+  esc.attach(_motorPin);
   arm();
+}
 
-} //construct Motor object
+void Motor::arm()
+{
+  // Stops the motor (calls mapMiddle because negative direction is also in the positive value)
+  esc.writeMicroseconds(mapMiddle);
+}
 
-void Motor::Run(int speedPcnt, double timeSec) {
-  //arm();
-  if (speedPcnt <= 100 && speedPcnt >= -100) {
-    setSpeed(speedPcnt);
-  }
-  delay(timeSec * 1000);
-  //arm();
-}//Run motor
-
-void Motor::Run(int dir, int deg, int speedPcnt) { //unused for now
-  arm();
-  
-  int speed;
-  int time;
-  if (dir == 0) {
-    speed = -1 * abs(speedPcnt);
-  }
-  else {
-    speed = abs(speedPcnt);
-  }
-  //Implement conversion from desired degrees to speed+time given a certain speed*************
-  //(do such that it doesnt depend on the delay - ie can run two commands at once)
-  //***************************
-
-  arm();
-}//Run motor based on pos
-
-void Motor::tuneESC(double low, double high) { //unused for now
-  
+void Motor::run(int speedPercent, double seconds)
+{
+  // Only allow speed percentages in the range [-100%, 100%]
+  if (speedPercent > 100 && speedPercent < -100)
   {
-  int angle = map(high, -100, 100, 0, 180);
-  Servo::write(angle);
-  
-  delay(5000);
-
-  angle = map(low, -100, 100, 0, 180); //Sets servo positions to different speeds
-  Servo::write(angle);
-  delay(5000);
-
+    return;
   }
-  
-  /*//High forward
-  int angle = map(high, -100, 100, 0, 180); //Sets servo positions to different speeds
-  Servo::write(angle);
-  delay(7000);
 
-  //High reverse
-  angle = map(low, -100, 100, 0, 180); //Sets servo positions to different speeds
-  Servo::write(angle);
-  delay(10000);*/
-}//Setup ESC range
-
-
-void Motor::readEncoder() {
-}//Update counts var
-
-int Motor::getDir() {
-  volatile long preCounts = 0;
-  readEncoder();
-  preCounts = counts;
-  delay(10);
-  readEncoder();
-
-  if(counts > preCounts){
-    return -1; //CW / CCW (test)
+  // If user sets 0% speed, they're essentially just arming the motor
+  if (speedPercent == 0)
+  {
+    arm();
+    return;
   }
-  else if(counts < preCounts){
-    return 1; //CCW / CW
+
+  // Middle value might not be in the actual center, so map() will have different
+  // ranges based on where the "middle" is
+  int velocity;
+
+  if (speedPercent > 0)
+  {
+    velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh);
   }
-  else{
-    return 0; //Not moving
+  else
+  {
+    velocity = map(speedPercent, -100, 0, mapLow, mapMiddle);
   }
-  
-}//Get direction of motor (-1 = CCW, 1 = CW, 0 = not moving)
 
-int Motor::getVel() {
+  esc.writeMicroseconds(velocity);
+  delay(seconds * 1000);
+  arm();
+}
 
-  return 0;
-}//Get velocity feedback from encoder
+void Motor::runCall(int speedPercent)
+{
+  if (speedPercent > 100 && speedPercent < -100)
+  {
+    return;
+  }
+  if (speedPercent == 0)
+  {
+    arm();
+    return;
+  }
 
-long Motor::getCounts(){
-  readEncoder();
-  return counts;
-}//Update counts var and return current counts value
+  int velocity;
 
-void Motor::setSpeed(int speed) {
-  int velocity = map(speed, -100, 100, mapLow, mapHigh); //Sets servo positions to different speeds ESC1.write(angle);
-  //With full mapping [[map(speed, -100, 100, 0, 180)]], the max servo speeds are -88%->88%.
-  Serial.println(velocity);
-  Servo::writeMicroseconds(velocity);
-}//Set motor speed and map
+  if (speedPercent > 0)
+  {
+    velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh);
+  }
+  else
+  {
+    velocity = map(speedPercent, -100, 0, mapLow, mapMiddle);
+  }
 
-void Motor::arm() {
-  setSpeed(0);
-}//Set motor speed to 0
-
-void Motor::setMapLow(double newLow){
-  mapLow = newLow;
-}//Set the low end of the motor speed mapping
-
-void Motor::setMapHigh(double newHigh){
-  mapHigh = newHigh;
-}//Set the high end of the motor speed mapping
-
-double Motor::getMapLow(){
-  return mapLow;
-}//Get mapLow
-
-double Motor::getMapHigh(){
-  return mapHigh;
-}//Get mapHigh
-
-void Motor::printStatus(){
-  String state = "Dir: " + String(getDir()) + " Vel: " + String(getVel()) + " Counts: " + String(getCounts());
-  Serial.print(state);
-}//Print motor state
-
-
-//END OF MOTOR.CPP ****************************8
+  esc.writeMicroseconds(velocity);
+}

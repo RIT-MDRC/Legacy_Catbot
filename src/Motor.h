@@ -1,54 +1,48 @@
 #ifndef Motor_h
 #define Motor_h
 
-//Motor class for CatBot hip joints
 #include "Arduino.h"
 #include <Servo.h>
 #include <math.h>
-#include <String.h>
+#include <string.h>
 
-class Motor : public Servo{
+class Motor
+{
   public:
-    Motor(int motorPin, int encoderPinA, int encoderPinB, int lowthresh, int highthresh); //construct motor object, encoderPinA should be an interrupt Pin
+    // Construct motor object
+    Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle);
 
-    void arm(); //Set motor speed to 0
+    // Set motor speed to 0
+    void arm();
 
-    void Run(int speedPcnt, double timeSec); //Run motor for a % speed and a time in seconds
+    // Run motor at a percent speed for the given amount of time (in seconds)
+    void run(int speedPercent, double seconds);
 
-    void Run(int dir, int deg, int speedPcnt); //Run motor based on pos; dir = 0/1, 0=-% 1=+%
+    // Run motor at a percent speed for infinite amount of time
+    void runCall(int speedPercent);
 
-    void tuneESC(double low, double high); //Setup ESC range
+    // Set the low end of the motor speed mapping
+    void setMapLow(double newLow);
 
-    int getDir(); //Get directional feedback from encoder
-
-    int getVel(); //Get velocity feedback from encoder
-
-    long getCounts(); //Update and get value of counts
-
-    void readEncoder(); //Update counts
-
-    void setMapLow(double); //Set the low end of the motor speed mapping
-
-    void setMapHigh(double); //Set the high end of the motor speed mapping
-
+    // Set the high end of the motor speed mapping
+    void setMapHigh(double newHigh);
+    
+    // Get what the current lower mapping bound is
     double getMapLow();
 
+    // Get what the current upper mapping bound is
     double getMapHigh();
 
-    void printStatus(); //Print motor state
-
   private:
+    Servo esc;
+
     int motorPin;
-    int encoderPinA;
-    int encoderPinB;
 
-    double mapLow = 1000; //Low end of motor speed mapping
-    double mapHigh = 2000; //High end of motor speed mapping
-    
-    volatile long counts; //Encoder Counts
+    double mapLow = 1000;       // Low end of motor speed mapping (max negative spin)
+    double mapHigh = 2000;      // High end of motor speed mapping (max positive spin)
+    double mapMiddle;           // Middle point of speed mapping (no spin)
 
-    void setSpeed(int speed); //Set motor speed (low level control)
-    
+   // void setSpeed(int speed);   // Set motor speed (low level control)
 };
 
 #endif
