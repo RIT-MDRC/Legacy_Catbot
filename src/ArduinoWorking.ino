@@ -38,18 +38,18 @@ void setup() {
   Serial.begin(9600);   // start serial at 9600 baud
   while (!Serial) {}
   delay(1000);
-  Serial.write("up and running");
+  Serial.write("up and running\n");
   MOTORA.run(90, 5);
   MOTORB.run(90, 5);
   delay(5000);
-  Serial.write("running again");
-  MOTORA.run(40, 2);
+  Serial.write("running again\n");
   MOTORB.run(40, 2);
+  MOTORA.run(40, 2);
 }
 
 
 void loop() {
-  Serial.write("running loop");
+  Serial.write("running loop\n");
   // MOTORB.runCall(30);
   delay(2000);
   // MOTORA.arm();
