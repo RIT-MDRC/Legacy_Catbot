@@ -36,8 +36,6 @@ Motor* bMotor = NULL;
 Potentiometer* aPot = NULL;
 Potentiometer* bPot = NULL;
 
-// Potentiometer* aPot = NULL;
-// Potentiometer* bPot = NULL;
 
 void setup()
 {
@@ -101,100 +99,3 @@ bool checkPot(Potentiometer* pot, float lowerRange, float upperRange){
   return (lowerCheck && upperCheck);
 }
 
-
-// Servo firstESC;
-
-// Motor motorB;
-// Potentiometer potA(APOT, 285);
-// Potentiometer potB(BPOT, 285);
-
-// --- PROGRAM GRAVEYARD ---
-
-// Serial.write("running loop\n");
-// MOTORB.runCall(30);
-// delay(2000);
-// MOTORA.arm();
-// MOTORB.arm();
-
-// MOTORB.runCall(30);
-// Serial.write("motorB Called");
-// MOTORA.runCall(30);
-// Serial.write("motorA Called");
-// temp = Serial.parseInt();
-// while (temp != STOP) {
-//   Serial.write("work finished");
-// }'
-// MOTORB.arm();
-// void setup(){
-//  firstESC.attach(13);   //pin 13
-//  firstESC.writeMicroseconds(MIDDLE);
-
-//  for (int i = 0; i <= 3000; i += 100)
-//  {
-//   firstESC.writeMicroseconds(1800);
-//   delay(100);
-//  }
-
-//  firstESC.writeMicroseconds(MIDDLE);
-//  //set middle value ...........................
-//   Serial.println("middlevalue");
-
-//   firstESC.writeMicroseconds(MIDDLE);
-//   Serial.println(MIDDLE);
-//   while(value != START){        //wait until esc has been powered on
-//     value = Serial.parseInt();
-//     Serial.println("enter 3 to start");
-//     delay(100);
-//   }
-// //.............................................
-
-// //updown.......................................
-//   for(int i=MIDDLE;i<=UPPERLIMIT;i+=20){
-//     firstESC.writeMicroseconds(i);
-//     Serial.println(i);
-//     delay(100);
-//   }
-//   delay(2000); //pause at high thresh
-
-//   for(int i=UPPERLIMIT;i>=LOWERLIMIT;i-=20){
-//     firstESC.writeMicroseconds(i);
-//     Serial.println(i);
-//     delay(100);
-//   }
-//   delay(2000); //pause at low thresh
-
-//   for(int i=LOWERLIMIT;i<=MIDDLE;i+=20){ //reset to middle position before entering manual mode
-//     firstESC.writeMicroseconds(i);
-//     Serial.println(i);
-//     delay(100);
-//   }
-//   delay(1000);
-
-//   value = MIDDLE;
-
-//.........................
-// }
-
-// void loop(){
-// enter write values manually in infinite loop
-
-// temp = Serial.parseInt();
-
-// if(temp>=1) //checking for invalid characters
-// {
-//  value = temp;
-// }
-
-/*
- if(temp == 'k')//killswitch
- {
-  while(1)
-  {
-    firstESC.writeMicroseconds(MIDDLE);
-    value = MIDDLE;
-  }
- }*/
-
-// Serial.println(value);   //user feedback
-// firstESC.writeMicroseconds(value);
-// }
