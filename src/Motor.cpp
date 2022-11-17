@@ -9,12 +9,13 @@ Motor::Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle)
   mapHigh = _mapHigh;
   mapMiddle = _mapMiddle;
 
-  esc.attach(_motorPin);
+  esc.attach(_motorPin, mapLow, mapHigh);
   arm();
 }
 
 void Motor::arm()
 {
+  // Stops the motor (calls mapMiddle because negative direction is also in the positive value)
   esc.writeMicroseconds(mapMiddle);
 }
 
@@ -36,12 +37,21 @@ void Motor::run(int speedPercent, double seconds)
 
   if (speedPercent > 0) { velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh); }
   else { velocity = map(speedPercent, -100, 0, mapLow, mapMiddle); }
-
-  for (int i = 0; i <= seconds * 1000; i += DELAY)
-  {
-    esc.writeMicroseconds(velocity);
-    delay(DELAY);
-  }
-
+  
+  esc.writeMicroseconds(velocity);
+  delay(seconds*1000);
   arm();
+}
+
+void Motor::runCall(int speedPercent)
+{
+  if (speedPercent > 100 && speedPercent < -100) { return; }
+  if (speedPercent == 0) { arm(); return; }
+
+  int velocity;
+
+  if (speedPercent > 0) { velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh); }
+  else { velocity = map(speedPercent, -100, 0, mapLow, mapMiddle); }
+
+  esc.writeMicroseconds(velocity);
 }

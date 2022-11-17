@@ -13,33 +13,70 @@ INSTRUCTIONS:
 
 #include <Servo.h>
 #include "Motor.h"
+#include "Potentiometer.h"
 
 #define LOWERLIMIT 900
 #define MIDDLE 1500 // middle/starting value
 #define UPPERLIMIT 2000
 
-#define START 3 //garbage value - enter in serial monitor to begin testing process
+#define AMOTORPIN 13
+#define BMOTORPIN 12
+
+#define APOT A5 
+#define BPOT A4
+
+#define STOP 1 //garbage value - enter in serial monitor to begin testing process
                 //could and should be refined
 
-int value = MIDDLE; 
-int temp; //used to filter null characters
+#define MOTORA Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE)
+#define MOTORB Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE)
 
-
-//Servo firstESC; 
+// int value = MIDDLE; 
+// int temp; //used to filter null characters
 
 void setup() {
- 
- Motor motorA(13, LOWERLIMIT, UPPERLIMIT, MIDDLE); // Motor has to be initialized in setup() because  ?????? i don't know
- motorA.arm();
+  Serial.begin(9600);   // start serial at 9600 baud
+  while (!Serial) {}
+  delay(1000);
+  Serial.write("up and running");
+  MOTORA.run(90, 5);
+  MOTORB.run(90, 5);
+  delay(5000);
+  Serial.write("running again");
+  MOTORA.run(40, 2);
+  MOTORB.run(40, 2);
+}
 
- Serial.begin(9600);   // start serial at 9600 baud
- while (!Serial) {}
 
- // Rotates kind of slowly one way for 3 seconds, then the other way
- motorA.run(15, 3);
- delay(200);
- motorA.run(-15, 3);
- 
+void loop() {
+  Serial.write("running loop");
+  // MOTORB.runCall(30);
+  delay(2000);
+  // MOTORA.arm();
+  // MOTORB.arm();
+
+  // MOTORB.runCall(30);
+  // Serial.write("motorB Called");
+  // MOTORA.runCall(30);
+  // Serial.write("motorA Called");
+  // temp = Serial.parseInt();
+  // while (temp != STOP) {
+  //   Serial.write("work finished");
+  // }'
+  // MOTORB.arm();
+}
+
+  //Servo firstESC; 
+  // motorA.arm();
+  // motorB.arm();
+
+// Motor motorB;
+// Potentiometer potA(APOT, 285);
+// Potentiometer potB(BPOT, 285);
+
+// --- PROGRAM GRAVEYARD ---
+
+// void setup(){
 //  firstESC.attach(13);   //pin 13
 //  firstESC.writeMicroseconds(MIDDLE);
 
@@ -88,13 +125,10 @@ void setup() {
 //   value = MIDDLE;
 
 //.........................    
-}
+// }
 
 
-
-
-void loop() {
-
+// void loop(){
 //enter write values manually in infinite loop
 
   // temp = Serial.parseInt();
@@ -117,6 +151,5 @@ void loop() {
  
    //Serial.println(value);   //user feedback
    //firstESC.writeMicroseconds(value);
+// }
   
-  delay(100);
-}

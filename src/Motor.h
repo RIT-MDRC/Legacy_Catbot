@@ -18,6 +18,9 @@ class Motor
     // Run motor at a percent speed for the given amount of time (in seconds)
     void run(int speedPercent, double seconds);
 
+    // Run motor at a percent speed for infinite amount of time
+    void runCall(int speedPercent);
+
     // Set the low end of the motor speed mapping
     void setMapLow(double newLow);
 
