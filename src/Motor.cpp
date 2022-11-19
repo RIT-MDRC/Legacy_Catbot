@@ -19,6 +19,8 @@ void Motor::arm()
   esc.writeMicroseconds(mapMiddle);
 }
 
+// Runs the motor at a given percentage of speed for the given number of seconds.
+// A negative value for seconds will make the motor run infinitely.
 void Motor::run(int speedPercent, double seconds)
 {
   // Only allow speed percentages in the range [-100%, 100%]
@@ -48,32 +50,11 @@ void Motor::run(int speedPercent, double seconds)
   }
 
   esc.writeMicroseconds(velocity);
-  delay(seconds * 1000);
-  arm();
-}
-
-void Motor::runCall(int speedPercent)
-{
-  if (speedPercent > 100 && speedPercent < -100)
+  
+  // Run infinitely (or until another run() is called) if a negative value is passed for seconds
+  if (seconds >= 0)
   {
-    return;
-  }
-  if (speedPercent == 0)
-  {
+    delay(seconds * 1000);
     arm();
-    return;
   }
-
-  int velocity;
-
-  if (speedPercent > 0)
-  {
-    velocity = map(speedPercent, 0, 100, mapMiddle, mapHigh);
-  }
-  else
-  {
-    velocity = map(speedPercent, -100, 0, mapLow, mapMiddle);
-  }
-
-  esc.writeMicroseconds(velocity);
 }

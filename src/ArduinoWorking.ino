@@ -27,61 +27,80 @@ INSTRUCTIONS:
 
 #define MAXDEG 285.00
 
-#define STOP 1 // garbage value - enter in serial monitor to begin testing process
-               // could and should be refined
-
 // Messing around with pointers because we are cool like that :D
-Motor* aMotor = NULL;
-Motor* bMotor = NULL;
-Potentiometer* aPot = NULL;
-Potentiometer* bPot = NULL;
+Motor* aMotor;
+Motor* bMotor;
+Potentiometer* aPot;
+Potentiometer* bPot;
 
-// Potentiometer* aPot = NULL;
-// Potentiometer* bPot = NULL;
+bool motorMoving = false;
 
 void setup()
 {
   aMotor = new Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
-  bMotor = new Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
   aPot = new Potentiometer(APOT, MAXDEG);
-  bPot = new Potentiometer(BPOT, MAXDEG);
-  Serial.begin(9600); // start serial at 9600 baud
-  while (!Serial)
-  {
-  }
-  delay(1000);
-  Serial.write("starting program\n");
-  delay(1000);
-  String aDegree = String(aPot -> getReading());
-  String bDegree = String(bPot -> getReading());
-  Serial.println(aDegree);
-  Serial.println(bDegree);
 
-  // motorA.arm();
-  aMotor -> runCall(40);
-  bMotor -> runCall(40);
+  Serial.begin(9600);
+  while (!Serial) { }
+  Serial.println("starting");
+
+
+
+  // aMotor = new Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  // bMotor = new Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  // aPot = new Potentiometer(APOT, MAXDEG);
+  // bPot = new Potentiometer(BPOT, MAXDEG);
+  // Serial.begin(9600); // start serial at 9600 baud
+  // while (!Serial) { }
+  // delay(1000);
+  // Serial.write("starting program\n");
+  // delay(1000);
+  // String aDegree = String(aPot -> getReading());
+  // String bDegree = String(bPot -> getReading());
+  // Serial.println(aDegree);
+  // Serial.println(bDegree);
+
+  // // motorA.arm();
+  // aMotor -> run(40, -1);
+  // bMotor -> run(40, -1);
   
-  while ((!checkPot(aPot, 30.0, MAXDEG))||(!checkPot(bPot, 30.0, MAXDEG))){}
-  aMotor -> arm();
-  bMotor -> arm();
+  // while ((!checkPot(aPot, 30.0, MAXDEG))||(!checkPot(bPot, 30.0, MAXDEG))){}
+  // aMotor -> arm();
+  // bMotor -> arm();
   // delay(1000);
 
   // Make sure that the program has successfully ended before halting to prevent possible chance of memory leak
-  end();
+  //end();
 }
 
 void loop()
 {
-  end();
-  delay(100);
+  // Demonstrates that the motor and potentiometer can interact.
+  // For example, this code will ONLY allow the motor to run while the potentiometer is between 100-200 degrees (exclusive)
+
+  if (!motorMoving && aPot->getReading() > 100 && aPot->getReading() < 200)
+  {
+    motorMoving = true;
+    aMotor->run(10, -1);
+  }
+  else if (motorMoving && (aPot->getReading() <= 100 || aPot->getReading() >= 200))
+  {
+    motorMoving = false;
+    aMotor->arm();
+  }
+
+  delay(50);
 }
 
-void end(){
-  if (!aMotor || !bMotor || !aPot || !bPot) {
-    Serial.write("Program succesfully ended.\n");
-    return;
-  }
-  Serial.write("ending program...\n");
+void end()
+{
+  // if (!aMotor || !bMotor || !aPot || !bPot)
+  // {
+  //   Serial.write("Program succesfully ended.\n");
+  //   return;
+  // }
+
+  Serial.println("ending");
   delay(1000);
   delete aMotor;
   delete bMotor;
@@ -93,13 +112,14 @@ void end(){
   bPot = NULL;
 }
 
-bool checkPot(Potentiometer* pot, float lowerRange, float upperRange){
-  float reading = pot -> getReading();
-  Serial.println("checking pot " + String(reading));
-  bool lowerCheck = (lowerRange <= reading);
-  bool upperCheck = (reading <= upperRange);
-  return (lowerCheck && upperCheck);
-}
+// bool checkPot(Potentiometer* pot, float lowerRange, float upperRange)
+// {
+//   float reading = pot -> getReading();
+//   Serial.println("checking pot " + String(reading));
+//   bool lowerCheck = (lowerRange <= reading);
+//   bool upperCheck = (reading <= upperRange);
+//   return (lowerCheck && upperCheck);
+// }
 
 
 // Servo firstESC;

@@ -15,11 +15,9 @@ class Motor
     // Set motor speed to 0
     void arm();
 
-    // Run motor at a percent speed for the given amount of time (in seconds)
+    // Run motor at a percent speed for the given amount of time (in seconds).
+    // A negative value for seconds will make the motor run infinitely.
     void run(int speedPercent, double seconds);
-
-    // Run motor at a percent speed for infinite amount of time
-    void runCall(int speedPercent);
 
     // Set the low end of the motor speed mapping
     void setMapLow(double newLow);
@@ -36,13 +34,11 @@ class Motor
   private:
     Servo esc;
 
-    int motorPin;
+    int motorPin;               // The pin that will send a signal to the motor
 
     double mapLow = 1000;       // Low end of motor speed mapping (max negative spin)
     double mapHigh = 2000;      // High end of motor speed mapping (max positive spin)
     double mapMiddle;           // Middle point of speed mapping (no spin)
-
-   // void setSpeed(int speed);   // Set motor speed (low level control)
 };
 
 #endif
