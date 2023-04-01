@@ -20,8 +20,11 @@ INSTRUCTIONS:
 // -- MOTOR CONSTANTS --
 // ---------------------
 // pin
-#define AMOTORPIN 13
-#define BMOTORPIN 3
+
+// leg side to side
+#define MOTORPIN1 3
+// leg forward and backwards (LE)
+#define MOTORPIN2 5
 
 #define LOWERLIMIT 900
 #define MIDDLE 1500 // middle/starting value
@@ -55,8 +58,8 @@ INSTRUCTIONS:
 // ----------------- GLOBAL POINTERS --------------------
 // ---- Pointers will be defined later in the setup -----
 // ------------------------------------------------------
-Motor *aMotor = NULL;
-Motor *bMotor = NULL;
+Motor *motor1 = NULL;
+Motor *motor2 = NULL;
 Potentiometer *aPot = NULL;
 Potentiometer *bPot = NULL;
 
@@ -65,18 +68,18 @@ Potentiometer *bPot = NULL;
 void setup()
 {
   // Defining every class for each component
-  aMotor = new Motor(AMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
-  bMotor = new Motor(BMOTORPIN, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  motor1 = new Motor(MOTORPIN1, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  motor2 = new Motor(MOTORPIN2, LOWERLIMIT, UPPERLIMIT, MIDDLE);
   aPot = new Potentiometer(APOTPIN, MAXDEG);
   bPot = new Potentiometer(BPOTPIN, MAXDEG);
 
-  Serial.begin(9600); // start serial at 9600 baud
-  while (!Serial)
-  {
-  }
-  delay(1000);
-  Serial.write("starting program\n");
-  delay(1000);
+  // Serial.begin(9600); // start serial at 9600 baud
+  // while (!Serial)
+  // {
+  // }
+  // delay(1000);
+  // Serial.write("starting program\n");
+  // delay(1000);
 
   // Setup Arduino pins for pneumatics
   pinMode(COMPRESSORPIN, OUTPUT);
@@ -94,44 +97,53 @@ void setup()
   // ------------------ ACTUAL PROGRAM STARTS HERE ---------------------
   // -------------------------------------------------------------------
   // Reading angle from potentiometer
-  float aDegree = aPot->getReading();
-  float bDegree = bPot->getReading();
-  Serial.println(aDegree);
-  Serial.println(bDegree);
+  // float aDegree = aPot->getReading();
+  // float bDegree = bPot->getReading();
+  // Serial.println(aDegree);
+  // Serial.println(bDegree);
 
-  // Calling both motors to spin indefinitely
-  aMotor->runCall(40);
-  bMotor->runCall(40);
+  // Too little will not over come the resistance
+  // Positive is leg out
+  // Gravity will make the speed faster if the leg is being lowered (leg in is faster)
+  // const int speedA = -15;
+  
+  // const int speedB = -12;
+  // const int duration = 1000; //millisecond
 
-  delay(2000);
+  // // Calling both motors to spin indefinitely
+  // motor1->runCall(speedA);
+  // motor2->runCall(speedB);
 
-  // Waiting for both potentiometers to be rotated > 30 degrees
-  while ((!checkPot(aPot, 30.0, MAXDEG)) || (!checkPot(bPot, 30.0, MAXDEG)))
-  {
-  }
+  // delay(duration);
 
-  // Calling both motors to stop
-  aMotor->arm();
-  bMotor->arm();
+  // // Waiting for both potentiometers to be rotated > 30 degrees
+  // // while ((!checkPot(aPot, 30.0, MAXDEG)) || (!checkPot(bPot, 30.0, MAXDEG)))
+  // // {
+  // // }
+
+  // // Calling both motors to stop
+  // motor1->arm();
+  // motor2->arm();
 }
 
 void loop()
 {
+  
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Read in and calculate the pressure from the analog pressure sensor (psi)
   double sensorRead = (analogRead(SENSORPIN) * 0.0049);                                                    // Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; // PSI
 
-  // Print out readings
-  Serial.print("Pressure: ");
-  Serial.print(sensorRead);
-  Serial.print("  ...  ");
-  Serial.print(pressure);
-  Serial.print(" psi, CSwitch: ");
-  Serial.print(digitalRead(COMP_SWITCHPIN));
-  Serial.print(", VSwitch: ");
-  Serial.print(digitalRead(VALVE1_SWITCHPIN));
-  Serial.println();
+  // // Print out readings
+  // Serial.print("Pressure: ");
+  // Serial.print(sensorRead);
+  // Serial.print("  ...  ");
+  // Serial.print(pressure);
+  // Serial.print(" psi, CSwitch: ");
+  // Serial.print(digitalRead(COMP_SWITCHPIN));
+  // Serial.print(", VSwitch: ");
+  // Serial.print(digitalRead(VALVE1_SWITCHPIN));
+  // Serial.println();
 
   // pressure = SYSTEM_PRESSURE + 1; //Comment out for Automatic Compressor operation
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +153,9 @@ void loop()
   { // Run Motor program if push both buttons at the same time
     delay(500);
     // extendLeg(VALVE_1PIN);
-    stepForward(VALVE_1PIN, aMotor, 20, 3);
+    // stepForward(VALVE_1PIN, motor2, 20, 3);
+    slowStep(VALVE_1PIN, motor2, 20, 4, 1);
+    sideToside(motor1, 20, 3, 1);
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,14 +196,14 @@ void loop()
 void extendLeg(int valve, float durationSec)
   // Extends the leg by calling the pneumatics
 {
-  digitalWrite(valve, HIGH);
+  digitalWrite(valve, LOW);
   delay(durationSec);
 }
 
 void retractLeg(int valve, float durationSec)
   // Retract the leg by calling the pneumatics
 {
-  digitalWrite(valve, LOW);
+  digitalWrite(valve, HIGH);
   delay(durationSec);
 }
 
@@ -208,42 +222,76 @@ void rotateLegBackward(Motor *motor, int rotationSpeedPer, float durationSec)
 void legLiftForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
   // Sequence to Lift the leg and moving it forward
-  retractLeg(valve, durationSec / 2);
-  rotateLegForward(motor, rotationSpeedPer , durationSec / 2);
+  retractLeg(valve, durationSec * 3 / 4);
+  rotateLegForward(motor, rotationSpeedPer , durationSec / 4);
 }
 
 void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
   // Sequence to step down and push itself forward
-  extendLeg(valve, durationSec / 2);
-  rotateLegBackward(motor, rotationSpeedPer, durationSec / 2);
+  extendLeg(valve, durationSec * 3 / 4);
+  rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
 }
 
 void stepForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
+  // Tweak gravity constant
+  // > 1 
+  const int gravAgainstConstant = 1;
+  // < 1
+  const int gravForConstant = 1/2;
   // Sequence to make a step forward
   delay(durationSec / 6);
-  legLiftForward(valve, motor, rotationSpeedPer, durationSec/3);
+  legLiftForward(valve, motor, rotationSpeedPer*gravAgainstConstant, durationSec/3);
   delay(durationSec / 6);
-  legDropBackward(valve, motor, rotationSpeedPer, durationSec/3);
+  legDropBackward(valve, motor, rotationSpeedPer*gravForConstant, durationSec/3);
+}
+
+void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
+{
+  delayStep *= 1000;
+  retractLeg(valve, durationSec / 4);
+  delay(delayStep);
+  rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
+  delay(delayStep);
+  extendLeg(valve, durationSec / 4);
+  delay(delayStep);
+  rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
+  delay(delayStep);
+}
+
+void sideToside(Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
+{
+  // Tweak gravity constant
+  // > 1 
+  const int gravAgainstConstant = 1;
+  // < 1
+  const int gravForConstant = 1;
+  delayStep *= 1000;
+  const int rotationSpeedUp = rotationSpeedPer*gravAgainstConstant;
+  rotateLegForward(motor, rotationSpeedUp, durationSec / 3);
+  delay(delayStep);
+  const int rotationSpeedDown = rotationSpeedPer - 3;
+  rotateLegBackward(motor, rotationSpeedDown, 0.45);
+  delay(delayStep);
 }
 
 void end()
 {
   // Runs the ending sequence to properly reset the pointers
-  if (!aMotor || !bMotor || !aPot || !bPot)
+  if (!motor1 || !motor2 || !aPot || !bPot)
   {
     Serial.write("Program succesfully ended.\n");
     return;
   }
   Serial.write("ending program...\n");
   delay(1000);
-  delete aMotor;
-  delete bMotor;
+  delete motor1;
+  delete motor2;
   delete aPot;
   delete bPot;
-  aMotor = NULL;
-  bMotor = NULL;
+  motor1 = NULL;
+  motor2 = NULL;
   aPot = NULL;
   bPot = NULL;
 }
