@@ -13,7 +13,6 @@ INSTRUCTIONS:
   5) Program enters manual mode - use the serial monitor to enter any speed value
 */
 
-
 // ----------------- CONSTANTS -------------------
 
 // ---------------------
@@ -45,15 +44,15 @@ INSTRUCTIONS:
 // pins
 #define COMPRESSORPIN 9
 #define VALVE_1PIN 8
-#define SENSORPIN A0 // Analog
-#define COMP_SWITCHPIN 11
-#define VALVE1_SWITCHPIN 10
+#define SENSORPIN A0        // Analog
+#define COMP_SWITCHPIN 11   // button #1
+#define VALVE1_SWITCHPIN 10 // button #2
 
 #define V_SENSOR 5
 #define P_MAX 145 // psi
 #define P_MIN 0
-#define SYSTEM_PRESSURE 82
-#define PRESSURE_TOLERANCE 3
+#define SYSTEM_PRESSURE 82   // average pressure we want to maintain
+#define PRESSURE_TOLERANCE 3 // tolerance for pressure (we want to maintain in the difference margin of 3 psi)
 
 // ----------------- GLOBAL POINTERS --------------------
 // ---- Pointers will be defined later in the setup -----
@@ -106,7 +105,7 @@ void setup()
   // Positive is leg out
   // Gravity will make the speed faster if the leg is being lowered (leg in is faster)
   // const int speedA = -15;
-  
+
   // const int speedB = -12;
   // const int duration = 1000; //millisecond
 
@@ -128,7 +127,7 @@ void setup()
 
 void loop()
 {
-  
+
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Read in and calculate the pressure from the analog pressure sensor (psi)
   double sensorRead = (analogRead(SENSORPIN) * 0.0049);                                                    // Volts
@@ -194,14 +193,14 @@ void loop()
 // ---------------------------------------------------------------------
 
 void extendLeg(int valve, float durationSec)
-  // Extends the leg by calling the pneumatics
+// Extends the leg by calling the pneumatics
 {
   digitalWrite(valve, LOW);
   delay(durationSec);
 }
 
 void retractLeg(int valve, float durationSec)
-  // Retract the leg by calling the pneumatics
+// Retract the leg by calling the pneumatics
 {
   digitalWrite(valve, HIGH);
   delay(durationSec);
@@ -223,7 +222,7 @@ void legLiftForward(int valve, Motor *motor, int rotationSpeedPer, float duratio
 {
   // Sequence to Lift the leg and moving it forward
   retractLeg(valve, durationSec * 3 / 4);
-  rotateLegForward(motor, rotationSpeedPer , durationSec / 4);
+  rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
 }
 
 void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
@@ -236,15 +235,15 @@ void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durati
 void stepForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
   // Tweak gravity constant
-  // > 1 
+  // > 1
   const int gravAgainstConstant = 1;
   // < 1
-  const int gravForConstant = 1/2;
+  const int gravForConstant = 1 / 2;
   // Sequence to make a step forward
   delay(durationSec / 6);
-  legLiftForward(valve, motor, rotationSpeedPer*gravAgainstConstant, durationSec/3);
+  legLiftForward(valve, motor, rotationSpeedPer * gravAgainstConstant, durationSec / 3);
   delay(durationSec / 6);
-  legDropBackward(valve, motor, rotationSpeedPer*gravForConstant, durationSec/3);
+  legDropBackward(valve, motor, rotationSpeedPer * gravForConstant, durationSec / 3);
 }
 
 void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
@@ -263,12 +262,12 @@ void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, 
 void sideToside(Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
 {
   // Tweak gravity constant
-  // > 1 
+  // > 1
   const int gravAgainstConstant = 1;
   // < 1
   const int gravForConstant = 1;
   delayStep *= 1000;
-  const int rotationSpeedUp = rotationSpeedPer*gravAgainstConstant;
+  const int rotationSpeedUp = rotationSpeedPer * gravAgainstConstant;
   rotateLegForward(motor, rotationSpeedUp, durationSec / 3);
   delay(delayStep);
   const int rotationSpeedDown = rotationSpeedPer - 3;
