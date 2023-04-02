@@ -15,7 +15,7 @@ Motor::Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle)
 
 void Motor::arm()
 {
-  // Stops the motor (calls mapMiddle because negative direction is also in the positive value)
+  // Stops the motor
   esc.writeMicroseconds(mapMiddle);
 }
 
@@ -76,4 +76,11 @@ void Motor::runCall(int speedPercent)
   }
 
   esc.writeMicroseconds(velocity);
+}
+
+void Motor::runRawValue(int value, double seconds)
+{
+  esc.writeMicroseconds(value);
+  delay(seconds * 1000);
+  arm();
 }

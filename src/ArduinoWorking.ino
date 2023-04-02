@@ -23,7 +23,7 @@ INSTRUCTIONS:
 // leg side to side
 #define MOTORPIN1 3
 // leg forward and backwards (LE)
-#define MOTORPIN2 5
+#define MOTORPIN2 6
 
 #define LOWERLIMIT 900
 #define MIDDLE 1500 // middle/starting value
@@ -66,20 +66,51 @@ Potentiometer *bPot = NULL;
 
 void setup()
 {
-  // Defining every class for each component
+  Serial.begin(9600);
+  setMotorPointer();
+  // setPotPointer();
+  // setupPin();
+}
+
+void loop()
+{
+  mainMotorTest(motor2, 20); // test motor at pin 5
+
+  // Control
+  // if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
+  // { // Run Motor program if push both buttons at the same time
+  //   delay(500);
+  //   // extendLeg(VALVE_1PIN);
+  //   // stepForward(VALVE_1PIN, motor2, 20, 3);
+  //   slowStep(VALVE_1PIN, motor2, 20, 4, 1);
+  //   sideToside(motor1, 20, 3, 1);
+  // }
+  // else
+  // { // Pneumatics Control
+  //   mainPneumaticControl();
+  // }
+
+  // delay(100);
+}
+
+// ---------------------------------------------------------------------
+// ---------------------- Helper methods below -------------------------
+// ---------------------------------------------------------------------
+
+void setMotorPointer()
+{
   motor1 = new Motor(MOTORPIN1, LOWERLIMIT, UPPERLIMIT, MIDDLE);
   motor2 = new Motor(MOTORPIN2, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+}
+
+void setPotPointer()
+{
   aPot = new Potentiometer(APOTPIN, MAXDEG);
   bPot = new Potentiometer(BPOTPIN, MAXDEG);
+}
 
-  // Serial.begin(9600); // start serial at 9600 baud
-  // while (!Serial)
-  // {
-  // }
-  // delay(1000);
-  // Serial.write("starting program\n");
-  // delay(1000);
-
+void setupPin()
+{
   // Setup Arduino pins for pneumatics
   pinMode(COMPRESSORPIN, OUTPUT);
   pinMode(VALVE_1PIN, OUTPUT);
@@ -91,106 +122,55 @@ void setup()
   // Set relay pins to low (relay is ACTIVE HIGH)
   digitalWrite(COMPRESSORPIN, LOW);
   digitalWrite(VALVE_1PIN, LOW);
+};
 
-  // -------------------------------------------------------------------
-  // ------------------ ACTUAL PROGRAM STARTS HERE ---------------------
-  // -------------------------------------------------------------------
-  // Reading angle from potentiometer
-  // float aDegree = aPot->getReading();
-  // float bDegree = bPot->getReading();
-  // Serial.println(aDegree);
-  // Serial.println(bDegree);
-
-  // Too little will not over come the resistance
-  // Positive is leg out
-  // Gravity will make the speed faster if the leg is being lowered (leg in is faster)
-  // const int speedA = -15;
-
-  // const int speedB = -12;
-  // const int duration = 1000; //millisecond
-
-  // // Calling both motors to spin indefinitely
-  // motor1->runCall(speedA);
-  // motor2->runCall(speedB);
-
-  // delay(duration);
-
-  // // Waiting for both potentiometers to be rotated > 30 degrees
-  // // while ((!checkPot(aPot, 30.0, MAXDEG)) || (!checkPot(bPot, 30.0, MAXDEG)))
-  // // {
-  // // }
-
-  // // Calling both motors to stop
-  // motor1->arm();
-  // motor2->arm();
-}
-
-void loop()
+void mainMotorTest(Motor *motor, int motorSpeedPercent)
 {
 
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  // Read in and calculate the pressure from the analog pressure sensor (psi)
+  // for (int i = 0; i < 10; i++)
+  // {
+  //   Serial.println((i + 1) * 10);
+  //   motor->run((i + 1) * 10, 1);
+  //   delay(500);
+  // }
+
+  for (int i = 0; i < 10; i++)
+  {
+    Serial.println(-(i + 1) * 10);
+    motor->run(-(i + 1) * 10, 1);
+    delay(500);
+  }
+}
+
+void mainPneumaticControl()
+{
   double sensorRead = (analogRead(SENSORPIN) * 0.0049);                                                    // Volts
   double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; // PSI
 
-  // // Print out readings
-  // Serial.print("Pressure: ");
-  // Serial.print(sensorRead);
-  // Serial.print("  ...  ");
-  // Serial.print(pressure);
-  // Serial.print(" psi, CSwitch: ");
-  // Serial.print(digitalRead(COMP_SWITCHPIN));
-  // Serial.print(", VSwitch: ");
-  // Serial.print(digitalRead(VALVE1_SWITCHPIN));
-  // Serial.println();
-
-  // pressure = SYSTEM_PRESSURE + 1; //Comment out for Automatic Compressor operation
-  //////////////////////////////////////////////////////////////////////////////////////////////
-
-  // Control
-  if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
-  { // Run Motor program if push both buttons at the same time
-    delay(500);
-    // extendLeg(VALVE_1PIN);
-    // stepForward(VALVE_1PIN, motor2, 20, 3);
-    slowStep(VALVE_1PIN, motor2, 20, 4, 1);
-    sideToside(motor1, 20, 3, 1);
+  if (pressure > SYSTEM_PRESSURE)
+  { // First check if system pressure is too high, turn off compressor
+    digitalWrite(COMPRESSORPIN, LOW);
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////////
 
+  if (((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == LOW)))
+  {
+    // If pressure is too low, or overriden by manual switch, turn on compressor
+    digitalWrite(COMPRESSORPIN, HIGH);
+  }
   else
-  { // Pneumatics Control
-    if (pressure > SYSTEM_PRESSURE)
-    { // First check if system pressure is too high, turn off compressor
-      digitalWrite(COMPRESSORPIN, LOW);
-    }
-
-    if (((SYSTEM_PRESSURE - pressure) > PRESSURE_TOLERANCE) || ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == LOW)))
-    {
-      // If pressure is too low, or overriden by manual switch, turn on compressor
-      digitalWrite(COMPRESSORPIN, HIGH);
-    }
-    else
-    {
-      digitalWrite(COMPRESSORPIN, LOW);
-    }
-
-    if ((digitalRead(COMP_SWITCHPIN) == LOW) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
-    { // If valve switch is pressed open valve
-      digitalWrite(VALVE_1PIN, HIGH);
-    }
-    else
-    {
-      digitalWrite(VALVE_1PIN, LOW);
-    }
+  {
+    digitalWrite(COMPRESSORPIN, LOW);
   }
 
-  delay(100);
+  if ((digitalRead(COMP_SWITCHPIN) == LOW) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
+  { // If valve switch is pressed open valve
+    digitalWrite(VALVE_1PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(VALVE_1PIN, LOW);
+  }
 }
-
-// ---------------------------------------------------------------------
-// ---------------------- Helper methods below -------------------------
-// ---------------------------------------------------------------------
 
 void extendLeg(int valve, float durationSec)
 // Extends the leg by calling the pneumatics
