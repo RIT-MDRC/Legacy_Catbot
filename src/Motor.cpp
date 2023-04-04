@@ -24,6 +24,7 @@ void Motor::run(int speedPercent, double seconds)
   // Only allow speed percentages in the range [-100%, 100%]
   if (speedPercent > 100 && speedPercent < -100)
   {
+    Serial.println("Speed percentage out of range. " + String(speedPercent));
     return;
   }
 
@@ -80,6 +81,13 @@ void Motor::runCall(int speedPercent)
 
 void Motor::runRawValue(int value, double seconds)
 {
+  // check to make sure the value is in the range of the ESC
+  if (value < mapLow || value > mapHigh)
+  {
+    Serial.println("Value out of range of ESC" + String(value) + " must be " + String(mapLow) + " to " + String(mapHigh));
+    return;
+  }
+
   esc.writeMicroseconds(value);
   delay(seconds * 1000);
   arm();

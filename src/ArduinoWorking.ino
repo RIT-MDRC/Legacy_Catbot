@@ -70,11 +70,13 @@ void setup()
   setMotorPointer();
   // setPotPointer();
   // setupPin();
+  while (!Serial)
+    ;
 }
 
 void loop()
 {
-  mainMotorTest(motor2, 20); // test motor at pin 5
+  mainMotorTest(motor1, 20); // test motor at pin 5
 
   // Control
   // if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
@@ -126,20 +128,23 @@ void setupPin()
 
 void mainMotorTest(Motor *motor, int motorSpeedPercent)
 {
-
-  // for (int i = 0; i < 10; i++)
-  // {
-  //   Serial.println((i + 1) * 10);
-  //   motor->run((i + 1) * 10, 1);
-  //   delay(500);
-  // }
-
+  Serial.println("Testing Motor");
+  Serial.println("testing arm function");
+  Serial.println("Motor should be not running");
+  motor->runRawValue(1500, 3);
+  Serial.println("ending arm function");
+  delay(1000);
+  Serial.println("testing out negative direction");
   for (int i = 0; i < 10; i++)
   {
-    Serial.println(-(i + 1) * 10);
-    motor->run(-(i + 1) * 10, 1);
+    int vel = map(-i * 10, -100, 0, LOWERLIMIT, MIDDLE);
+    Serial.println(-i * 10);
+    Serial.println(vel);
+    // motor->runRawValue(vel, 1);
+    motor->run(-i * 10, 1);
     delay(500);
   }
+  delay(1000);
 }
 
 void mainPneumaticControl()
