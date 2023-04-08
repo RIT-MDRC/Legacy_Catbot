@@ -76,7 +76,8 @@ void setup()
 
 void loop()
 {
-  mainMotorTest(motor1, 20); // test motor at pin 5
+  // multiStageMotorTest(motor1, 20); // test motor at pin 5
+  singleSpeedMotorTest(motor1, 90);
 
   // Control
   // if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
@@ -126,7 +127,7 @@ void setupPin()
   digitalWrite(VALVE_1PIN, LOW);
 };
 
-void mainMotorTest(Motor *motor, int motorSpeedPercent)
+void multiStageMotorTest(Motor *motor, int motorSpeedPercent)
 {
   Serial.println("Testing Motor");
   Serial.println("testing arm function");
@@ -145,6 +146,13 @@ void mainMotorTest(Motor *motor, int motorSpeedPercent)
     delay(500);
   }
   delay(1000);
+}
+
+void singleSpeedMotorTest(Motor *motor, int motorSpeedPercent)
+{
+  Serial.println("Testing Motor");
+  delay(1000);
+  motor->run(motorSpeedPercent, 1);
 }
 
 void mainPneumaticControl()
