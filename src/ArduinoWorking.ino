@@ -2,6 +2,13 @@
 #include <Servo.h>
 #include "Motor.h"
 #include "Potentiometer.h"
+#include <Servo.h>
+
+Servo ESC; // create servo object to control the ESC
+
+int potValue;
+long writeVal;
+bool reset = false;
 /**
 Code to iterate over range of speed values to test ESC limits and verify function
 
@@ -23,18 +30,18 @@ INSTRUCTIONS:
 // leg side to side
 #define MOTORPIN1 3
 // leg forward and backwards (LE)
-#define MOTORPIN2 6
+#define MOTORPIN2 5
 
 #define LOWERLIMIT 900
-#define MIDDLE 1500 // middle/starting value
+#define MIDDLE 1420 // middle/starting value
 #define UPPERLIMIT 2000
 
 // -----------------------------
 // -- POTENTIOMETER CONSTANTS --
 // -----------------------------
 // pin
-#define APOTPIN A5
-#define BPOTPIN A4
+#define APOTPIN A1
+#define BPOTPIN A2
 
 #define MAXDEG 285.00
 
@@ -66,44 +73,74 @@ Potentiometer *bPot = NULL;
 
 void setup()
 {
+  setupPin();
+  setPotPointer();
+  reset = false;
   Serial.begin(9600);
-  setMotorPointer();
-  // setPotPointer();
-  // setupPin();
   while (!Serial)
-    ;
+  {
+    if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
+    {
+      reset = true;
+    }
+  };
+  setMotorPointer(reset);
+  while (!(digitalRead(COMP_SWITCHPIN) == HIGH) || !(digitalRead(VALVE1_SWITCHPIN) == HIGH))
+  {
+    Serial.println("wait for esc to boot and press both buttons");
+  }
 }
 
 void loop()
 {
-  // multiStageMotorTest(motor1, 20); // test motor at pin 5
-  singleSpeedMotorTest(motor1, 90);
+  if (reset)
+  {
+    Serial.println("resetting motors");
+    while (true)
+    {
+      runEsc(motor1, bPot);
+    }
+  }
 
-  // Control
-  // if ((digitalRead(COMP_SWITCHPIN) == HIGH) && (digitalRead(VALVE1_SWITCHPIN) == HIGH))
-  // { // Run Motor program if push both buttons at the same time
-  //   delay(500);
-  //   // extendLeg(VALVE_1PIN);
-  //   // stepForward(VALVE_1PIN, motor2, 20, 3);
-  //   slowStep(VALVE_1PIN, motor2, 20, 4, 1);
-  //   sideToside(motor1, 20, 3, 1);
-  // }
+  while (true)
+  {
+    if (aPot->isCloseToEdge())
+    {
+      Serial.println("pot A is close to edge. Resetting location");
+      motor1->moveAwayFromWall(aPot, 15);
+    }
+    runEsc(motor1, bPot);
+  }
+
+  while (true)
+  {
+    motor1->arm();
+    motor2->arm();
+  };
+  if (false)
+  { // Run Motor program if push both buttons at the same time
+    // delay(500);
+    // extendLeg(VALVE_1PIN, 1);
+    stepForward(VALVE_1PIN, motor2, 20, 3);
+    slowStep(VALVE_1PIN, motor2, 20, 4, 1);
+    sideToside(motor1, 20, 3, 1);
+  }
   // else
   // { // Pneumatics Control
-  //   mainPneumaticControl();
+  // mainPneumaticControl();
   // }
 
-  // delay(100);
+  delay(100);
 }
 
 // ---------------------------------------------------------------------
 // ---------------------- Helper methods below -------------------------
 // ---------------------------------------------------------------------
 
-void setMotorPointer()
+void setMotorPointer(bool resetMode)
 {
-  motor1 = new Motor(MOTORPIN1, LOWERLIMIT, UPPERLIMIT, MIDDLE);
-  motor2 = new Motor(MOTORPIN2, LOWERLIMIT, UPPERLIMIT, MIDDLE);
+  motor1 = new Motor(MOTORPIN1, LOWERLIMIT, UPPERLIMIT, MIDDLE, resetMode);
+  motor2 = new Motor(MOTORPIN2, LOWERLIMIT, UPPERLIMIT, MIDDLE, resetMode);
 }
 
 void setPotPointer()
@@ -127,22 +164,41 @@ void setupPin()
   digitalWrite(VALVE_1PIN, LOW);
 };
 
-void multiStageMotorTest(Motor *motor, int motorSpeedPercent)
+/**
+ * This is the esc setup function for just testing the esc controlling method
+ */
+void setupEsc(int pin)
+{
+  ESC.attach(pin);
+}
+
+/**
+ * This is a function to run the esc with a potentiometer directly
+ */
+void runEsc(Motor *motor, Potentiometer *pot)
+{
+  potValue = pot->getRawReading();             // reads the value of the potentiometer (value between 0 and 1023)
+  Serial.println(potValue);                    // Output the value to the serial monitor
+  potValue = map(potValue, 0, 840, -100, 100); // scale it to use it with the servo library (value between 0 and 180)
+  motor->runCall(potValue);                    // Send the signal to the ESC
+}
+
+void multiStageMotorTest(Motor *motor, bool positive)
 {
   Serial.println("Testing Motor");
   Serial.println("testing arm function");
   Serial.println("Motor should be not running");
-  motor->runRawValue(1500, 3);
+  motor->runRawValue(MIDDLE, 3);
   Serial.println("ending arm function");
   delay(1000);
   Serial.println("testing out negative direction");
+  int positiveNum = positive ? 1 : -1;
   for (int i = 0; i < 10; i++)
   {
-    int vel = map(-i * 10, -100, 0, LOWERLIMIT, MIDDLE);
-    Serial.println(-i * 10);
+    int vel = map(positiveNum * i * 10, -100, 0, LOWERLIMIT, MIDDLE);
+    Serial.println(positiveNum * i * 10);
     Serial.println(vel);
-    // motor->runRawValue(vel, 1);
-    motor->run(-i * 10, 1);
+    motor->run(positiveNum * i * 10, 3);
     delay(500);
   }
   delay(1000);
@@ -150,9 +206,9 @@ void multiStageMotorTest(Motor *motor, int motorSpeedPercent)
 
 void singleSpeedMotorTest(Motor *motor, int motorSpeedPercent)
 {
-  Serial.println("Testing Motor");
+  Serial.println("Testing Motor: raw value - " + String(motorSpeedPercent));
   delay(1000);
-  motor->run(motorSpeedPercent, 1);
+  motor->runRawValue(motorSpeedPercent, 1);
 }
 
 void mainPneumaticControl()
@@ -214,14 +270,14 @@ void rotateLegBackward(Motor *motor, int rotationSpeedPer, float durationSec)
 void legLiftForward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
   // Sequence to Lift the leg and moving it forward
-  retractLeg(valve, durationSec * 3 / 4);
+  // retractLeg(valve, durationSec * 3 / 4);
   rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
 }
 
 void legDropBackward(int valve, Motor *motor, int rotationSpeedPer, float durationSec)
 {
   // Sequence to step down and push itself forward
-  extendLeg(valve, durationSec * 3 / 4);
+  // extendLeg(valve, durationSec * 3 / 4);
   rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
 }
 
@@ -242,11 +298,11 @@ void stepForward(int valve, Motor *motor, int rotationSpeedPer, float durationSe
 void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
 {
   delayStep *= 1000;
-  retractLeg(valve, durationSec / 4);
+  // retractLeg(valve, durationSec / 4);
   delay(delayStep);
   rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
   delay(delayStep);
-  extendLeg(valve, durationSec / 4);
+  // extendLeg(valve, durationSec / 4);
   delay(delayStep);
   rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
   delay(delayStep);
@@ -292,8 +348,35 @@ bool checkPot(Potentiometer *pot, float lowerRange, float upperRange)
 {
   // Check function that check if the potentiometer is rotated to the correct degrees
   float reading = pot->getReading();
-  Serial.println("checking pot " + String(reading));
   bool lowerCheck = (lowerRange <= reading);
   bool upperCheck = (reading <= upperRange);
   return (lowerCheck && upperCheck);
+}
+
+void stopMotorOnPot(Potentiometer *pot, Motor *motor)
+{
+  if (checkPot(pot, 0, 5) || checkPot(pot, MAXDEG - 5, MAXDEG))
+  {
+    motor->arm();
+  }
+}
+
+void runMotorOnPotOkayState(Potentiometer *pot, Motor *motor, int speed)
+{
+  if (!checkPot(pot, 0, 5) || !checkPot(pot, MAXDEG - 5, MAXDEG))
+  {
+    motor->runCall(speed);
+  }
+}
+
+void resetMotors()
+{
+  motor1->runRawValue(MIDDLE, 3);
+  motor2->runRawValue(MIDDLE, 3);
+}
+
+bool potMoved(Potentiometer *pot, float lastRawValue, int tolerance)
+{
+  int reading = pot->getRawReading();
+  return (abs(reading - lastRawValue) > tolerance);
 }

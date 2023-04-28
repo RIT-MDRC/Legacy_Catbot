@@ -5,12 +5,13 @@
 #include <Servo.h>
 #include <math.h>
 #include <string.h>
+#include "Potentiometer.h"
 
 class Motor
 {
 public:
   // Construct motor object
-  Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle);
+  Motor(int _motorPin, int _mapLow, int _mapHigh, int _mapMiddle, bool _resetMode);
 
   // Set motor speed to 0
   void arm();
@@ -36,6 +37,18 @@ public:
   // Get what the current upper mapping bound is
   double getMapHigh();
 
+  // Stop the motor for a split second if we are running in the opposite direction
+  void checkDirection(int speedPercent);
+
+  // Update the current direction of the motor (speed can be in any unit except for raw esc value)
+  void updateCurrentDirection(int speed);
+
+  int reset(Potentiometer *pot);
+
+  void runReverse(int speed);
+
+  void moveAwayFromWall(Potentiometer *pot, int speed);
+
 private:
   Servo esc;
 
@@ -44,7 +57,7 @@ private:
   double mapLow = 1000;  // Low end of motor speed mapping (max negative spin)
   double mapHigh = 2000; // High end of motor speed mapping (max positive spin)
   double mapMiddle;      // Middle point of speed mapping (no spin)
-
+  int currentDirection;  // Current direction of motor (1, 0, or -1)
   // void setSpeed(int speed);   // Set motor speed (low level control)
 };
 
