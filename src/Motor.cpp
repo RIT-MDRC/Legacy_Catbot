@@ -104,6 +104,10 @@ void Motor::checkDirection(int speed)
   }
 }
 
+/**
+ * runs the motor in reverse direction from the current speed
+ * @param speed the speed to run the motor in reverse (0<=speed<=100)
+ */
 void Motor::runReverse(int speed)
 {
   if (currentDirection == 0)
@@ -111,7 +115,7 @@ void Motor::runReverse(int speed)
     Serial.println("Motor is not running");
     return;
   }
-  if (speed > 100 || speed < -100)
+  if (speed > 100 || speed < 0)
   {
     Serial.println("Speed percentage out of range. " + String(speed));
     return;
@@ -121,6 +125,9 @@ void Motor::runReverse(int speed)
   runCall(direction * velocity);
 }
 
+/**
+ * move the motor away from the wall while also checking the potentiometer for the distance from the wall
+ */
 void Motor::moveAwayFromWall(Potentiometer *pot, int speed)
 {
   if (pot->isCloseToEdge())
