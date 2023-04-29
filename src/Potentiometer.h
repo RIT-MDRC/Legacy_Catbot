@@ -7,7 +7,7 @@
 class Potentiometer
 {
 public:
-  Potentiometer(int _pin, int _maxDeg, int _maxValue = 800);
+  Potentiometer(int _pin, int _maxDeg, int _minDeg = 0, int _minValue = 40, int _maxValue = 800);
 
   // Converts raw data to a rotational degree value.
   // Starts at zero, and increases as potentiometer is rotated counterclockwise.
@@ -18,9 +18,21 @@ public:
 
   int getRawReading();
 
-  bool isInRawValue(int minRawVal, int maxRawVal);
+  bool inRawRange();
 
-  bool isInDegree(int minDeg, int maxDeg);
+  bool inRawRange(int value);
+
+  bool inDegRange();
+
+  bool inDegRange(int value);
+
+  bool inRawRange(int min, int max);
+
+  bool inDegRange(int min, int max);
+
+  bool inRange(int min, int max);
+
+  bool inRange(int min, int max, int value);
 
   bool isMoving(int tolerance = 1);
 
@@ -28,10 +40,22 @@ public:
 
   bool isBottomHalf();
 
+  int getMinDegrees();
+
+  int getMaxDegrees();
+
+  int getCenterDegrees();
+
+  bool readingApproximately(int target, float threshold);
+
 private:
-  int pin;      // Pin that will read potentiometer values
-  int maxDeg;   // Maximum rotation of the potentiometer (degrees)
+  int pin;    // Pin that will read potentiometer values
+  int maxDeg; // Maximum rotation of the potentiometer (degrees)
+  int minDeg; // Minimum rotation of the potentiometer (degrees)
+  int centerDeg;
   int maxValue; // Maximum raw output value of the potentiometer (usually is 1023)
+  int minValue;
+  int centerValue;
   float lastRawReading;
 };
 

@@ -23,7 +23,6 @@ More detailed instructions below
 
 # List of Necessary Libraries
 
--   Encoder by Paul Stoffregen
 -   Servo by Michael Margolis
 -   EventAnalog by philip Fletcher
 

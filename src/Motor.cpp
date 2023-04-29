@@ -155,43 +155,62 @@ void Motor::updateCurrentDirection(int speed)
 
 /**
  * place the motor to the middle of the potentiometer
+ * TODO: make this function work
  */
 int Motor::reset(Potentiometer *pot)
 {
-  if (pot->getRawReading() == 0)
-  {
-    Serial.println("Potentiometer is already at 0 please move it to a different position");
-    return 1;
-  }
-  int speed = 20;
-  runCall(speed);
-  int lowPotValue = pot->getRawReading();
-  while (pot->getRawReading() != lowPotValue)
-  {
-    lowPotValue = pot->getRawReading();
-  }
-  arm();
-  if (pot->getRawReading() != 0)
-  {
-    Serial.println("Motor is blocked please clear space");
-    return 1;
-  }
-  runCall(-speed);
-  // get off of the limit switch
-  while (pot->getRawReading() == 0)
-    ;
-  int highPotValue = pot->getRawReading();
-  while (pot->getRawReading() != highPotValue)
-  {
-    highPotValue = pot->getRawReading();
-  }
-  arm();
-  int middlePotValue = (lowPotValue + highPotValue) / 2;
-  runCall(speed);
-  while (!pot->isInRawValue(middlePotValue, lowPotValue))
-  {
-    runCall(speed);
-  }
-  arm();
-  return 0;
+  //   if (pot->getRawReading() == 0)
+  //   {
+  //     Serial.println("Potentiometer is already at 0 please move it to a different position");
+  //     return 1;
+  //   }
+  //   runCall(20);
+  //   int firstPotValue;
+  //   int currentPotPos = pot->getRawReading();
+  //   while (currentPotPos != 0 || !pot->isCloseToEdge())
+  //   {
+  //     firstPotValue = currentPotPos;
+  //     currentPotPos = pot->getRawReading();
+  //     Serial.println("Potentiometer value: " + String(currentPotPos));
+  //   }
+  //   arm();
+  //   if (pot->getRawReading() != 0)
+  //   {
+  //     Serial.println("Assembly error: the potentiometer is offset to one side");
+  //     return 1;
+  //   }
+  //   Serial.println("First potentiometer value recorded: " + String(firstPotValue));
+  //   delay(1000);
+  //   // get off of the limit switch
+  //   runCall(-20);
+  //   while (pot->getRawReading() == 0)
+  //   {
+  //     Serial.println("Waiting for pot to move off of limit switch");
+  //   }
+  //   int secondPotValue;
+  //   currentPotPos = pot->getRawReading();
+  //   while (currentPotPos != 0 || !pot->isCloseToEdge())
+  //   {
+  //     secondPotValue = currentPotPos;
+  //     currentPotPos = pot->getRawReading();
+  //     Serial.println("Potentiometer value: " + String(currentPotPos));
+  //   }
+  //   arm();
+  //   if (pot->getRawReading() != 0)
+  //   {
+  //     Serial.println("Assembly error: the potentiometer is offset to one side");
+  //     return 1;
+  //   }
+  //   Serial.println("Second potentiometer value recorded: " + String(secondPotValue));
+  //   delay(1000);
+  //   int middlePotValue = (firstPotValue + secondPotValue) / 2;
+  //   Serial.println("Middle potentiometer value calculated: " + String(middlePotValue));
+  //   runCall(20);
+  //   while (!pot->inRawRange(middlePotValue, firstPotValue, pot->))
+  //   {
+  //     Serial.println("Waiting for pot to move to middle position" + String(pot->getRawReading()) + " target pot value: " + String(middlePotValue));
+  //   }
+  //   arm();
+  //   Serial.println("Motor position reset complete final Pot position: " + String(pot->getRawReading()) + " target pot value: " + String(middlePotValue) + " first pot value: " + String(firstPotValue) + " second pot value: " + String(secondPotValue));
+  //   return 0;
 }

@@ -5,11 +5,16 @@
 // _pin: The analog pin the potentiometer is connected to (e.g. A0)
 // _maxDeg: The maximum rotation of the potentiometer, in degrees
 // _maxValue: The maximum raw value that the potentiometer can output (default is 1023)
-Potentiometer::Potentiometer(int _pin, int _maxDeg, int _maxValue = 800)
+Potentiometer::Potentiometer(int _pin, int _maxDeg, int _minDeg = 0, int _minValue = 40, int _maxValue = 800)
 {
   pin = _pin;
   maxDeg = _maxDeg;
+  minDeg = _minDeg;
   maxValue = _maxValue;
+  minValue = _minValue;
+
+  centerDeg = (maxDeg + minDeg) / 2;
+  centerValue = (maxValue + minValue) / 2;
 
   pinMode(pin, INPUT);
   getRawReading();
@@ -20,7 +25,8 @@ Potentiometer::Potentiometer(int _pin, int _maxDeg, int _maxValue = 800)
 int Potentiometer::getReading()
 {
   int potVar = getRawReading();
-  return potVar / maxValue * maxDeg;
+  Serial.println(String(potVar) + " " + String(maxValue) + " " + String(maxDeg));
+  return (double)potVar / (double)maxValue * (double)maxDeg;
 }
 
 // Gets current degree reading as an integer value.
@@ -28,26 +34,38 @@ int Potentiometer::getReadingInt() { return (int)ceil(getReading()); }
 
 int Potentiometer::getRawReading()
 {
-  lastRawReading = analogRead(pin);
-  return lastRawReading;
+  return analogRead(pin);
 }
 
-/**
- * check if the potentiometer is in a range (inclusive on both ends)
- */
-bool Potentiometer::isInRawValue(int minRawVal, int maxRawVal)
+bool Potentiometer::inRawRange()
 {
-  int value = getRawReading();
-  return value >= minRawVal && value <= maxRawVal;
+  return inRange(minValue, maxValue);
 }
 
-/**
- * check if the potentiometer is in a range (inclusive on both ends)
- */
-bool Potentiometer::isInDegree(int minDeg, int maxDeg)
+bool Potentiometer::inRawRange(int value)
 {
-  int value = getReading();
-  return value >= minDeg && value <= maxDeg;
+  return inRange(minValue, maxValue, value);
+}
+
+bool Potentiometer::inDegRange()
+{
+  return inRange(minDeg, maxDeg);
+}
+
+bool Potentiometer::inDegRange(int value)
+{
+  return inRange(minDeg, maxDeg, value);
+}
+
+bool Potentiometer::inRange(int min, int max)
+{
+  int val = getReading();
+  return inRange(min, max, val);
+}
+
+bool Potentiometer::inRange(int min, int max, int value)
+{
+  return min <= value && value <= max;
 }
 
 /**
@@ -68,4 +86,24 @@ bool Potentiometer::isCloseToEdge(int tolerance = 50)
 bool Potentiometer::isBottomHalf()
 {
   return getRawReading() < maxValue / 2;
+}
+
+int Potentiometer::getMinDegrees()
+{
+  return minDeg;
+}
+
+int Potentiometer::getMaxDegrees()
+{
+  return maxDeg;
+}
+
+int Potentiometer::getCenterDegrees()
+{
+  return centerDeg;
+}
+
+bool Potentiometer::readingApproximately(int target, float threshold)
+{
+  return inRange(target - threshold, target + threshold);
 }

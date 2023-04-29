@@ -12,7 +12,7 @@ class MotorController
 {
 public:
   // Construct motor object
-  MotorController(Motor *_motor, Potentiometer *_pot, int _minDegrees, int _maxDegrees);
+  MotorController(Motor *_motor, Potentiometer *_pot);
 
   // Calibrate the potentiometer
   void calibrate();
@@ -33,7 +33,7 @@ public:
   void turnTo(int degree, int speedPercent);
 
   // Turn the motor to a specific degree with in a given time
-  void turnToWithIn(int degree, int time);
+  void turnToWithin(int degree, int time);
 
   int getCurrentDegree();
 
@@ -55,6 +55,10 @@ public:
 
   int getDirectionToMin();
 
+  void printPotLocationInLoop(int delayTime = 100);
+
+  bool isAtSetpoint(double setpoint, int direction);
+
 private:
   Motor *motor;
   Potentiometer *pot;
@@ -62,8 +66,6 @@ private:
   int defaultSpeed = 70;         // Default speed of motor
   int potOffset = 0;             // Offset of potentiometer
   double speedDegreeRatio = 0.5; // Ratio of speed to degrees
-  double minDegrees = 0;         // Minimum degrees of motor
-  double maxDegrees;             // Maximum degrees of motor
 };
 
 #endif

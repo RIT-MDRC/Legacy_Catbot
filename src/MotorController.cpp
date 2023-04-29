@@ -1,50 +1,146 @@
 #include "MotorController.h"
+#include <Arduino.h>
 
-MotorController::MotorController(Motor *_motor, Potentiometer *_pot, int _minDegrees, int _maxDegrees)
+#define DEFAULT_SPEED (20)
+#define SETPOINT_TOLERANCE_DEGREES 4
+
+MotorController::MotorController(Motor *_motor, Potentiometer *_pot)
 {
   motor = _motor;
   pot = _pot;
-  minDegrees = _minDegrees;
-  maxDegrees = _maxDegrees;
 }
 
-// // Calibrate the potentiometer
-// void MotorController::calibrate();
+/**
+ * Uses the current potentiometer value as the 0 setpoint spot
+ */
+void MotorController::calibrate()
+{
+}
 
-// // Stop Motor
-// void MotorController::stop();
+// Stop Motor
+void MotorController::stop()
+{
+  motor->arm();
+}
 
-// // Turn motor by the amount of degrees with a given speed
-// void MotorController::turn(int degree, int speedPercent);
+// Turn motor by the amount of degrees with a given speed
+void MotorController::turn(int setpoint, int speedPercent)
+{
+  int initialDeg = pot->getReading();
+  if (setpoint < 0)
+  {
+    speedPercent = -speedPercent;
+  }
+  while (pot->inDegRange() && pot->getReading() < initialDeg + setpoint)
+  {
+    motor->runCall(speedPercent);
+  }
+  stop();
+}
 
-// // Turn motor by the amount of degrees with default speed
-// void MotorController::turn(int degree);
+// Turn motor by the amount of degrees with default speed
+void MotorController::turn(int setpoint)
+{
+  turn(setpoint, DEFAULT_SPEED);
+}
 
-// // Turn the motor to a specific degree with a default speed
-// void MotorController::turnTo(int degree);
+// Turn the motor to a specific setpoint with a given speed
+void MotorController::turnTo(int setpoint, int speedPercent)
+{
+  // make sure setpoint is in the valid range
+  if (pot->getMinDegrees() > setpoint || pot->getMaxDegrees() < setpoint)
+    return;
 
-// // Turn the motor to a specific degree with a given speed
-// void MotorController::turnTo(int degree, int speedPercent);
+  // figure out which direction to turn
+  int initialDeg = pot->getReading();
+  int direction = setpoint > initialDeg ? 1 : -1;
 
-// // Turn the motor to a specific degree with in a given time
-// void MotorController::turnToWithIn(int degree, int time);
+  // while we are not yet at the setpoint...
+  // (and make sure that the pot is in a valid range, just in case!)
+  while (pot->inDegRange() && !isAtSetpoint(setpoint, direction))
+  {
+    // ...move the motor towards the setpoint
+    motor->runCall(direction * speedPercent);
+  }
 
-// int MotorController::getCurrentDegree();
+  // motion is done - turn off the motor
+  stop();
+}
 
-// int MotorController::getMinDegrees();
+// Turn the motor to a specific setpoint with a default speed
+void MotorController::turnTo(int setpoint)
+{
+  turnTo(setpoint, DEFAULT_SPEED);
+}
 
-// int MotorController::getMaxDegrees();
+// Turn the motor to a specific setpoint within a given time
+// TODO: Implement next semester
+void MotorController::turnToWithin(int setpoint, int time)
+{
+}
 
-// int MotorController::getDistanceToMax();
+int MotorController::getCurrentDegree()
+{
+  return pot->getReading();
+}
 
-// int MotorController::getDistanceToMin();
+int MotorController::getMinDegrees()
+{
+  return pot->getMinDegrees();
+}
 
-// int MotorController::getDegreesToClosest();
+int MotorController::getMaxDegrees()
+{
+  return pot->getMaxDegrees();
+}
 
-// int MotorController::getDirectionToClosest();
+int MotorController::getDistanceToMax()
+{
+  return getMaxDegrees() - pot->getReading();
+}
 
-// int MotorController::getDirectionToFarthest();
+int MotorController::getDistanceToMin()
+{
+  return pot->getReading() - getMinDegrees();
+}
 
-// int MotorController::getDirectionToMax();
+int MotorController::getDegreesToClosest()
+{
+  return min(getDistanceToMax(), getDistanceToMin());
+}
 
-// int MotorController::getDirectionToMin();
+int MotorController::getDirectionToClosest()
+{
+  return getDistanceToMax() < getDistanceToMin() ? 1 : -1;
+}
+
+int MotorController::getDirectionToFarthest()
+{
+  return getDistanceToMax() > getDistanceToMin() ? 1 : -1;
+}
+
+int MotorController::getDirectionToMax()
+{
+  return getDistanceToMax() > 0 ? 1 : 0;
+}
+
+int MotorController::getDirectionToMin()
+{
+  return getDistanceToMin() > 0 ? -1 : 0;
+}
+
+void MotorController::printPotLocationInLoop(int delayTime = 100)
+{
+  while (true)
+  {
+    Serial.println(pot->getReading());
+    delay(delayTime);
+  }
+}
+
+bool MotorController::isAtSetpoint(double setpoint, int direction)
+{
+  int value = pot->getReading();
+  Serial.println(String(value) + " " + String(setpoint) + " " + String(direction));
+  return (setpoint - value) * direction < SETPOINT_TOLERANCE_DEGREES;
+}
