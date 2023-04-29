@@ -57,7 +57,7 @@ INSTRUCTIONS:
 #define COMP_SWITCHPIN 11   // button #1
 #define VALVE1_SWITCHPIN 10 // button #2
 
-#define V_SENSOR 5
+#define VOLTAGE_CONST 5
 #define P_MAX 145 // psi
 #define P_MIN 0
 #define SYSTEM_PRESSURE 82   // average pressure we want to maintain
@@ -121,55 +121,72 @@ void setup()
 
 void loop()
 {
-  if (reset)
+  if (isBothSwitchPressed())
   {
-    Serial.println("resetting motors");
-    MotorController *mc = abductionAdductionAdjustment ? abductionAdduction : flexionExtension;
-    mc->printPotLocationInLoop();
+    retractLeg(VALVE_1PIN, 5000);
+    extendLeg(VALVE_1PIN, 5000);
   }
-
-  while (true)
+  else
   {
-    Serial.println("abduction hip");
-    abductHip();
-    Serial.println("adduction hip");
-    adductHip();
-    delay(1000);
-
-    Serial.println("Flex hip");
-    flexHip();
-    Serial.println("Extend hip");
-    extendHip();
-    delay(1000);
-
-    Serial.println("retract");
-    retractLeg(VALVE_1PIN, 3);
-    Serial.println("extend");
-    extendLeg(VALVE_1PIN, 3);
-    delay(1000);
+    mainPneumaticControl();
   }
-
-  // while (true)
-  // {
-  //   abductionAdduction->stop();
-  //   flexionExtension->stop();
-  // };
-  // if (false)
-  // { // Run Motor program if push both buttons at the same time
-  //   // delay(500);
-  //   // extendLeg(VALVE_1PIN, 1);
-  //   stepForward(VALVE_1PIN, motor2, 20, 3);
-  //   slowStep(VALVE_1PIN, motor2, 20, 4, 1);
-  //   sideToside(motor1, 20, 3, 1);
-  // }
-  // else
-  // { // Pneumatics Control
-  // mainPneumaticControl();
-  // }
-
-  while (true)
-    ;
+  Serial.print("abductionAdduction:");
+  Serial.print(abductionAdduction->getCurrentDegree());
+  Serial.print(",flexionExtension:");
+  Serial.println(flexionExtension->getCurrentDegree());
+  delay(100);
 }
+
+// // if (reset)
+// // {
+// //   // Serial.println("resetting motors");
+// //   // MotorController *mc = abductionAdductionAdjustment ? abductionAdduction : flexionExtension;
+// //   // mc->printPotLocationInLoop();
+// // }
+
+// while (true)
+// {
+//   // Serial.println("abduction hip");
+//   // abductHip();
+//   // Serial.println("adduction hip");
+//   // adductHip();
+//   // delay(1000);
+
+//   // Serial.println("Flex hip");
+//   // flexHip();
+//   // Serial.println("Extend hip");
+//   // extendHip();
+//   // delay(1000);
+
+//   mainPneumaticControl();
+
+//   Serial.println("retract");
+//   retractLeg(VALVE_1PIN, 3);
+//   Serial.println("extend");
+//   extendLeg(VALVE_1PIN, 3);
+//   delay(1000);
+// }
+
+// while (true)
+// {
+//   abductionAdduction->stop();
+//   flexionExtension->stop();
+// };
+// if (isBothSwitchPressed())
+// { // Run Motor program if push both buttons at the same time
+//   // delay(500);
+//   // extendLeg(VALVE_1PIN, 1);
+//   // stepForward(VALVE_1PIN, motor2, 20, 3);
+//   // slowStep(VALVE_1PIN, motor2, 20, 4, 1);
+//   // sideToside(motor1, 20, 3, 1);
+// }
+// else
+// { // Pneumatics Control
+//   mainPneumaticControl();
+// }
+
+// while (true)
+//   ;
 
 // ----------------------------------------------------------------------
 // ---------------------- Setup Functions below -------------------------
@@ -205,10 +222,10 @@ void setupPin()
 /**
  * This is the esc setup function for just testing the esc controlling method
  */
-void setupEsc(int pin)
-{
-  ESC.attach(pin);
-}
+// void setupEsc(int pin)
+// {
+//   ESC.attach(pin);
+// }
 
 bool isBothSwitchPressed()
 {
@@ -222,8 +239,8 @@ bool isCompSwitchPressed()
 
 void mainPneumaticControl()
 {
-  double sensorRead = (analogRead(SENSORPIN) * 0.0049);                                                    // Volts
-  double pressure = (((sensorRead - 0.1 * V_SENSOR) * (P_MAX - P_MIN)) / (0.8 * V_SENSOR)) + P_MIN + 0.36; // PSI
+  double sensorRead = (analogRead(SENSORPIN) * 0.0049);                                                              // Volts
+  double pressure = (((sensorRead - 0.1 * VOLTAGE_CONST) * (P_MAX - P_MIN)) / (0.8 * VOLTAGE_CONST)) + P_MIN + 0.36; // PSI
 
   if (pressure > SYSTEM_PRESSURE)
   { // First check if system pressure is too high, turn off compressor
@@ -254,25 +271,25 @@ void mainPneumaticControl()
 // ================ Step Sequence Functions ==================
 // ===========================================================
 
-void abductHip()
-{
-  abductionAdduction->turnTo(SETPOINT_HIP_ABDUCT_DEGREES);
-}
+// void abductHip()
+// {
+//   abductionAdduction->turnTo(SETPOINT_HIP_ABDUCT_DEGREES);
+// }
 
-void adductHip()
-{
-  abductionAdduction->turnTo(SETPOINT_HIP_ABDUCT_DEGREES);
-}
+// void adductHip()
+// {
+//   abductionAdduction->turnTo(SETPOINT_HIP_ABDUCT_DEGREES);
+// }
 
-void flexHip()
-{
-  flexionExtension->turnTo(SETPOINT_HIP_FLEX_DEGREES);
-}
+// void flexHip()
+// {
+//   flexionExtension->turnTo(SETPOINT_HIP_FLEX_DEGREES);
+// }
 
-void extendHip()
-{
-  flexionExtension->turnTo(SETPOINT_HIP_EXTEND_DEGREES);
-}
+// void extendHip()
+// {
+//   flexionExtension->turnTo(SETPOINT_HIP_EXTEND_DEGREES);
+// }
 
 // Extends the leg by calling the pneumatics
 void extendLeg(int valve, float durationSec)
@@ -287,48 +304,48 @@ void retractLeg(int valve, float durationSec)
   delay(durationSec);
 }
 
-void stepForward(int valve, MotorController *motorController, int rotationSpeedPer, float durationSec)
-{
-  // // Tweak gravity constant
-  // // > 1
-  // const int gravAgainstConstant = 1;
-  // // < 1
-  // const int gravForConstant = 1 / 2;
-  // // Sequence to make a step forward
-  // delay(durationSec / 6);
-  // legLiftForward(valve, motor, rotationSpeedPer * gravAgainstConstant, durationSec / 3);
-  // delay(durationSec / 6);
-  // legDropBackward(valve, motor, rotationSpeedPer * gravForConstant, durationSec / 3);
-}
+// void stepForward(int valve, MotorController *motorController, int rotationSpeedPer, float durationSec)
+// {
+//   // // Tweak gravity constant
+//   // // > 1
+//   // const int gravAgainstConstant = 1;
+//   // // < 1
+//   // const int gravForConstant = 1 / 2;
+//   // // Sequence to make a step forward
+//   // delay(durationSec / 6);
+//   // legLiftForward(valve, motor, rotationSpeedPer * gravAgainstConstant, durationSec / 3);
+//   // delay(durationSec / 6);
+//   // legDropBackward(valve, motor, rotationSpeedPer * gravForConstant, durationSec / 3);
+// }
 
-void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
-{
-  // delayStep *= 1000;
-  // // retractLeg(valve, durationSec / 4);
-  // delay(delayStep);
-  // rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
-  // delay(delayStep);
-  // // extendLeg(valve, durationSec / 4);
-  // delay(delayStep);
-  // rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
-  // delay(delayStep);
-}
+// void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
+// {
+//   // delayStep *= 1000;
+//   // // retractLeg(valve, durationSec / 4);
+//   // delay(delayStep);
+//   // rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
+//   // delay(delayStep);
+//   // // extendLeg(valve, durationSec / 4);
+//   // delay(delayStep);
+//   // rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
+//   // delay(delayStep);
+// }
 
-void sideToside(Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
-{
-  // // Tweak gravity constant
-  // // > 1
-  // const int gravAgainstConstant = 1;
-  // // < 1
-  // const int gravForConstant = 1;
-  // delayStep *= 1000;
-  // const int rotationSpeedUp = rotationSpeedPer * gravAgainstConstant;
-  // rotateLegForward(motor, rotationSpeedUp, durationSec / 3);
-  // delay(delayStep);
-  // const int rotationSpeedDown = rotationSpeedPer - 3;
-  // rotateLegBackward(motor, rotationSpeedDown, 0.45);
-  // delay(delayStep);
-}
+// void sideToside(Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
+// {
+//   // // Tweak gravity constant
+//   // // > 1
+//   // const int gravAgainstConstant = 1;
+//   // // < 1
+//   // const int gravForConstant = 1;
+//   // delayStep *= 1000;
+//   // const int rotationSpeedUp = rotationSpeedPer * gravAgainstConstant;
+//   // rotateLegForward(motor, rotationSpeedUp, durationSec / 3);
+//   // delay(delayStep);
+//   // const int rotationSpeedDown = rotationSpeedPer - 3;
+//   // rotateLegBackward(motor, rotationSpeedDown, 0.45);
+//   // delay(delayStep);
+// }
 
 // ===========================================================
 // ================ Test Functions ===========================

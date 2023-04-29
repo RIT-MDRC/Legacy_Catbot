@@ -25,7 +25,6 @@ Potentiometer::Potentiometer(int _pin, int _maxDeg, int _minDeg = 0, int _minVal
 int Potentiometer::getReading()
 {
   int potVar = getRawReading();
-  Serial.println(String(potVar) + " " + String(maxValue) + " " + String(maxDeg));
   return (double)potVar / (double)maxValue * (double)maxDeg;
 }
 
