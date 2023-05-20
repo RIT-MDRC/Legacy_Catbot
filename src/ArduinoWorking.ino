@@ -2,7 +2,6 @@
 #include <Servo.h>
 #include "Motor.h"
 #include "Potentiometer.h"
-#include <Servo.h>
 #include "MotorController.h"
 
 Servo ESC; // create servo object to control the ESC
@@ -94,6 +93,7 @@ MotorController *abductionAdduction = NULL;
 // This is the old motor 2 and pot B
 MotorController *flexionExtension = NULL;
 
+Motor *motor1 = NULL;
 // ----------------- MAIN FUNCTION ----------------------
 
 void setup()
@@ -303,49 +303,6 @@ void retractLeg(int valve, float durationSec)
   digitalWrite(valve, HIGH);
   delay(durationSec);
 }
-
-// void stepForward(int valve, MotorController *motorController, int rotationSpeedPer, float durationSec)
-// {
-//   // // Tweak gravity constant
-//   // // > 1
-//   // const int gravAgainstConstant = 1;
-//   // // < 1
-//   // const int gravForConstant = 1 / 2;
-//   // // Sequence to make a step forward
-//   // delay(durationSec / 6);
-//   // legLiftForward(valve, motor, rotationSpeedPer * gravAgainstConstant, durationSec / 3);
-//   // delay(durationSec / 6);
-//   // legDropBackward(valve, motor, rotationSpeedPer * gravForConstant, durationSec / 3);
-// }
-
-// void slowStep(int valve, Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
-// {
-//   // delayStep *= 1000;
-//   // // retractLeg(valve, durationSec / 4);
-//   // delay(delayStep);
-//   // rotateLegForward(motor, rotationSpeedPer, durationSec / 4);
-//   // delay(delayStep);
-//   // // extendLeg(valve, durationSec / 4);
-//   // delay(delayStep);
-//   // rotateLegBackward(motor, rotationSpeedPer, durationSec / 4);
-//   // delay(delayStep);
-// }
-
-// void sideToside(Motor *motor, int rotationSpeedPer, float durationSec, int delayStep)
-// {
-//   // // Tweak gravity constant
-//   // // > 1
-//   // const int gravAgainstConstant = 1;
-//   // // < 1
-//   // const int gravForConstant = 1;
-//   // delayStep *= 1000;
-//   // const int rotationSpeedUp = rotationSpeedPer * gravAgainstConstant;
-//   // rotateLegForward(motor, rotationSpeedUp, durationSec / 3);
-//   // delay(delayStep);
-//   // const int rotationSpeedDown = rotationSpeedPer - 3;
-//   // rotateLegBackward(motor, rotationSpeedDown, 0.45);
-//   // delay(delayStep);
-// }
 
 // ===========================================================
 // ================ Test Functions ===========================

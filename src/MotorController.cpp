@@ -27,13 +27,10 @@ void MotorController::stop()
 void MotorController::turn(int setpoint, int speedPercent)
 {
   int initialDeg = pot->getReading();
-  if (setpoint < 0)
-  {
-    speedPercent = -speedPercent;
-  }
+  int finalSpeed = setpoint < 0 ? -speedPercent : speedPercent;
   while (pot->inDegRange() && pot->getReading() < initialDeg + setpoint)
   {
-    motor->runCall(speedPercent);
+    motor->runCall(finalSpeed);
   }
   stop();
 }
