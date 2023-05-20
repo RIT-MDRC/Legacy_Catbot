@@ -126,7 +126,7 @@ int MotorController::getDirectionToMin()
   return getDistanceToMin() > 0 ? -1 : 0;
 }
 
-void MotorController::printPotLocationInLoop(int delayTime = 100)
+void MotorController::printPotLocationInLoop(int delayTime)
 {
   while (true)
   {

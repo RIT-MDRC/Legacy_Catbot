@@ -8,6 +8,8 @@
 #include <math.h>
 #include <string.h>
 
+#define POT_LOOP_DELAY 100
+
 class MotorController
 {
 public:
@@ -55,7 +57,7 @@ public:
 
   int getDirectionToMin();
 
-  void printPotLocationInLoop(int delayTime = 100);
+  void printPotLocationInLoop(int delayTime = POT_LOOP_DELAY);
 
   bool isAtSetpoint(double setpoint, int direction);
 

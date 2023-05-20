@@ -212,5 +212,5 @@ int Motor::reset(Potentiometer *pot)
   //   }
   //   arm();
   //   Serial.println("Motor position reset complete final Pot position: " + String(pot->getRawReading()) + " target pot value: " + String(middlePotValue) + " first pot value: " + String(firstPotValue) + " second pot value: " + String(secondPotValue));
-  //   return 0;
+  return 0;
 }
